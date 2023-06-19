@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    bottomNaviBarClick : () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -33,6 +34,20 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
+            Button(
+                modifier = Modifier.size(100.dp, 60.dp),
+                onClick =  bottomNaviBarClick,
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    )
+            ) {
+                Text(
+                    text = "Bottom\nNaviBar",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
     }

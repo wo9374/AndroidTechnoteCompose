@@ -10,6 +10,7 @@ import com.example.androidtechnotecompose.ui.screens.HomeScreen
 
 enum class TechNoteScreen {
     Home,
+    BottomNavigation
 }
 
 @Composable
@@ -17,9 +18,13 @@ fun TechNoteNavHost( navController: NavHostController ){
     NavHost(navController = navController, startDestination = TechNoteScreen.Home.name){
         composable(TechNoteScreen.Home.name){
             HomeScreen(
+                bottomNaviBarClick = { navController.navigate(TechNoteScreen.BottomNavigation.name) }
             )
         }
 
+        composable(TechNoteScreen.BottomNavigation.name){
+            val botNavHostController = rememberNavController()
+            BottomNavBarScreen(botNavHostController)
         }
     }
 }
