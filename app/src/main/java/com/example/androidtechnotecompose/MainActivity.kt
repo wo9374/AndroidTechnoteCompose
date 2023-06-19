@@ -16,7 +16,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            TechNoteApp()
         }
     }
 }
 
+@Composable
+fun TechNoteApp(){
+    val navController = rememberNavController()
+
+    TechNoteComposeTheme{
+        Surface {
+            TechNoteNavHost(navController)
+        }
+    }
+}
