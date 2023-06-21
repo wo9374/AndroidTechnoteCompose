@@ -7,10 +7,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidtechnotecompose.ui.screens.BottomNavBarScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
+import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
-    BottomNavigation
+    BottomNavigation,
+    ViewPager,
 }
 
 @Composable
@@ -18,13 +20,18 @@ fun TechNoteNavHost( navController: NavHostController ){
     NavHost(navController = navController, startDestination = TechNoteScreen.Home.name){
         composable(TechNoteScreen.Home.name){
             HomeScreen(
-                bottomNaviBarClick = { navController.navigate(TechNoteScreen.BottomNavigation.name) }
+                bottomNaviBarClick = { navController.navigate(TechNoteScreen.BottomNavigation.name) },
+                viewPagerClick = { navController.navigate(TechNoteScreen.ViewPager.name) },
             )
         }
 
         composable(TechNoteScreen.BottomNavigation.name){
             val botNavHostController = rememberNavController()
             BottomNavBarScreen(botNavHostController)
+        }
+
+        composable(TechNoteScreen.ViewPager.name){
+            ViewPagerScreen()
         }
     }
 }
