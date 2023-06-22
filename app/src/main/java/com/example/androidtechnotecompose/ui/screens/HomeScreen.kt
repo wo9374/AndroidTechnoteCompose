@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 fun HomeScreen(
     bottomNaviBarClick : () -> Unit,
     viewPagerClick : () -> Unit,
+    exoPlayerClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -67,6 +68,23 @@ fun HomeScreen(
             ) {
                 Text(
                     text = "ViewPager",
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp,
+                )
+            }
+
+            //ExoPlayer
+            Button(
+                modifier = Modifier.size(90.dp, 50.dp),
+                onClick =  exoPlayerClick,
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    )
+            ) {
+                Text(
+                    text = "ExoPlayer",
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                 )

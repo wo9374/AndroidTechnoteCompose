@@ -6,13 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidtechnotecompose.ui.screens.BottomNavBarScreen
+import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
 import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
-    BottomNavigation,
-    ViewPager,
+    BottomNavigation, ViewPager, ExoPlayer,
 }
 
 @Composable
@@ -22,6 +22,7 @@ fun TechNoteNavHost( navController: NavHostController ){
             HomeScreen(
                 bottomNaviBarClick = { navController.navigate(TechNoteScreen.BottomNavigation.name) },
                 viewPagerClick = { navController.navigate(TechNoteScreen.ViewPager.name) },
+                exoPlayerClick = { navController.navigate(TechNoteScreen.ExoPlayer.name) },
             )
         }
 
@@ -30,9 +31,8 @@ fun TechNoteNavHost( navController: NavHostController ){
             BottomNavBarScreen(botNavHostController)
         }
 
-        composable(TechNoteScreen.ViewPager.name){
-            ViewPagerScreen()
-        }
+        composable(TechNoteScreen.ViewPager.name){ ViewPagerScreen() }
+        composable(TechNoteScreen.ExoPlayer.name){ ExoPlayerScreen() }
     }
 }
 
