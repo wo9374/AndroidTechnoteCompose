@@ -8,4 +8,9 @@
     <string name="bottom_nav_bar">Bottom\nNaviBar</string>
     <string name="view_pager">View\nPager</string>
     <string name="exo_player">Exo\nPlayer</string>
+    <string name="bottom_sheet">Bottom\nSheet</string>
+
+    <string name="modal_sheet">ModalSheet</string>
+    <string name="toggle_full_screen">Toggle Fullscreen</string>
+    <string name="hide_sheet">Hide Sheet</string>
 </resources>

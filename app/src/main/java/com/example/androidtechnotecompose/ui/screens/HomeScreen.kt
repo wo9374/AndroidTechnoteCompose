@@ -1,5 +1,6 @@
 package com.example.androidtechnotecompose.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,9 +15,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.androidtechnotecompose.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,11 +27,12 @@ fun HomeScreen(
     bottomNaviBarClick : () -> Unit,
     viewPagerClick : () -> Unit,
     exoPlayerClick : () -> Unit,
+    bottomSheetClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "홈") },
+                title = { Text(text = stringResource(R.string.app_name)) },
             )
         },
     ) {   paddingValues ->
@@ -37,6 +41,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
 
             //BottomNavigationBar
@@ -50,7 +55,7 @@ fun HomeScreen(
                     )
             ) {
                 Text(
-                    text = "Bottom\nNaviBar",
+                    text = stringResource(R.string.bottom_nav_bar),
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                 )
@@ -67,7 +72,7 @@ fun HomeScreen(
                     )
             ) {
                 Text(
-                    text = "ViewPager",
+                    text = stringResource(R.string.view_pager),
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                 )
@@ -89,6 +94,19 @@ fun HomeScreen(
                     fontSize = 10.sp,
                 )
             }
+
+            //BottomSheet
+            Button(
+                modifier = Modifier.size(90.dp, 50.dp),
+                onClick =  bottomSheetClick,
+                colors = ButtonDefaults
+                    .buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    )
+            ) {
+                Text(
+                    text = stringResource(R.string.bottom_sheet),
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                 )

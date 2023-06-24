@@ -6,33 +6,39 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidtechnotecompose.ui.screens.BottomNavBarScreen
+import com.example.androidtechnotecompose.ui.screens.BottomSheetScreen
 import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
 import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
-    BottomNavigation, ViewPager, ExoPlayer,
+    BottomNavigation, ViewPager, ExoPlayer, BottomSheet
 }
 
 @Composable
 fun TechNoteNavHost( navController: NavHostController ){
     NavHost(navController = navController, startDestination = TechNoteScreen.Home.name){
+
         composable(TechNoteScreen.Home.name){
-            HomeScreen(
-                bottomNaviBarClick = { navController.navigate(TechNoteScreen.BottomNavigation.name) },
-                viewPagerClick = { navController.navigate(TechNoteScreen.ViewPager.name) },
-                exoPlayerClick = { navController.navigate(TechNoteScreen.ExoPlayer.name) },
-            )
+            navController.apply {
+                HomeScreen(
+                    bottomNaviBarClick = { navigate(TechNoteScreen.BottomNavigation.name) },
+                    viewPagerClick = { navigate(TechNoteScreen.ViewPager.name) },
+                    exoPlayerClick = { navigate(TechNoteScreen.ExoPlayer.name) },
+                    bottomSheetClick = { navigate(TechNoteScreen.BottomSheet.name) },
+                )
+            }
         }
 
         composable(TechNoteScreen.BottomNavigation.name){
             val botNavHostController = rememberNavController()
             BottomNavBarScreen(botNavHostController)
         }
-
         composable(TechNoteScreen.ViewPager.name){ ViewPagerScreen() }
         composable(TechNoteScreen.ExoPlayer.name){ ExoPlayerScreen() }
+        composable(TechNoteScreen.BottomSheet.name){ BottomSheetScreen() }
+
     }
 }
 
