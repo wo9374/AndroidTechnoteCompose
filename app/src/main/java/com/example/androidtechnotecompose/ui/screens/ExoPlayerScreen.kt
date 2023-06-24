@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.androidtechnotecompose.R
 import com.example.androidtechnotecompose.noRippleClickable
+import com.example.androidtechnotecompose.setLandscape
+import com.example.androidtechnotecompose.setPortrait
 import com.example.androidtechnotecompose.ui.theme.Purple200
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -68,6 +70,8 @@ fun ExoPlayerScreen() {
         var totalDuration by remember { mutableStateOf(0L) }
         var currentTime by remember { mutableStateOf(0L) }
         var bufferedPercentage by remember { mutableStateOf(0) }
+
+        var isFullScreen by remember { mutableStateOf(false) }
 
         DisposableEffect(key1 = Unit) {
             //Bottom Control 에서 사용할 시간과 %를 알기 위한 Listener
@@ -135,7 +139,16 @@ fun ExoPlayerScreen() {
             totalDuration = { totalDuration },
             currentTime = { currentTime },
             bufferPercentage = { bufferedPercentage },
-            onSeekChanged = { timeMs: Float -> exoPlayer.seekTo(timeMs.toLong()) }
+            onSeekChanged = { timeMs: Float -> exoPlayer.seekTo(timeMs.toLong()) },
+
+            fullScreenToggle = {
+                if (isFullScreen.not()) {
+                    context.setLandscape()
+                } else {
+                    context.setPortrait()
+                }
+                isFullScreen = isFullScreen.not()
+            }
         )
     }
 
@@ -159,7 +172,8 @@ fun PlayerControls(
     totalDuration: () -> Long,
     currentTime: () -> Long,
     bufferPercentage: () -> Int,
-    onSeekChanged: (timeMs: Float) -> Unit
+    onSeekChanged: (timeMs: Float) -> Unit,
+    fullScreenToggle: () -> Unit
 ) {
     val visible = remember(isVisible()) { isVisible() }
 
@@ -200,7 +214,8 @@ fun PlayerControls(
                 totalDuration = totalDuration,
                 currentTime = currentTime,
                 bufferPercentage = bufferPercentage,
-                onSeekChanged = onSeekChanged
+                onSeekChanged = onSeekChanged,
+                fullScreenToggle = fullScreenToggle
             )
         }
     }
@@ -264,7 +279,8 @@ fun BottomControlsPanel(
     totalDuration: () -> Long,
     currentTime: () -> Long,
     bufferPercentage: () -> Int,
-    onSeekChanged: (timeMs: Float) -> Unit
+    onSeekChanged: (timeMs: Float) -> Unit,
+    fullScreenToggle: () -> Unit
 ) {
     val totalTime = remember(totalDuration()) { totalDuration() }
     val videoTime = remember(currentTime()) { currentTime() }
@@ -314,7 +330,7 @@ fun BottomControlsPanel(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterVertically),
-                onClick = {}
+                onClick = fullScreenToggle
             ) {
                 Image(
                     contentScale = ContentScale.Crop,
