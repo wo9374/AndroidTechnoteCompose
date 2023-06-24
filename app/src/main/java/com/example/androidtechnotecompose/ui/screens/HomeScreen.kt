@@ -84,7 +84,11 @@ fun HomeScreen(
                     )
             ) {
                 Text(
-                    text = "ExoPlayer",
+                    text = stringResource(R.string.exo_player),
+                    textAlign = TextAlign.Center,
+                    fontSize = 10.sp,
+                )
+            }
                     textAlign = TextAlign.Center,
                     fontSize = 10.sp,
                 )

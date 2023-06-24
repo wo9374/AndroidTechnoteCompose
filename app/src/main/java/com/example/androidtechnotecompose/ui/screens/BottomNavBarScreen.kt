@@ -36,9 +36,9 @@ private const val CHILD3 = "BotNavChild3"
 sealed class BottomNaviItem(
     val title: Int, val icon: ImageVector, val screenRoute: String,
 ) {
-    object Child1 : BottomNaviItem(R.string.child_1, Icons.Rounded.Home, CHILD1)
-    object Child2 : BottomNaviItem(R.string.child_2, Icons.Rounded.AddCircle, CHILD2)
-    object Child3 : BottomNaviItem(R.string.child_3, Icons.Rounded.Settings, CHILD3)
+    object Child1 : BottomNaviItem(R.string.first, Icons.Rounded.Home, CHILD1)
+    object Child2 : BottomNaviItem(R.string.second, Icons.Rounded.AddCircle, CHILD2)
+    object Child3 : BottomNaviItem(R.string.third, Icons.Rounded.Settings, CHILD3)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +69,7 @@ fun BottomBar(navHostController: NavHostController){
 
     NavigationBar(containerColor = MaterialTheme.colorScheme.background) {
 
-        items.forEachIndexed { index, item ->
+        items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.screenRoute,
                 onClick = {
@@ -109,7 +109,7 @@ fun BotBarChildScreen1() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
-            text = "BottomBarChild1",
+            text = stringResource(R.string.first),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = Color.White,
@@ -126,7 +126,7 @@ fun BotBarChildScreen2() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
-            text = "BottomBarChild2",
+            text = stringResource(R.string.second),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = Color.White,
@@ -143,7 +143,7 @@ fun BotBarChildScreen3() {
             .background(MaterialTheme.colorScheme.background)
     ) {
         Text(
-            text = "BottomBarChild3",
+            text = stringResource(R.string.third),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
             color = Color.White,

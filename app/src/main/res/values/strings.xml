@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">AndroidTechnoteCompose</string>
 
-    <string name="child_1">Child1</string>
-    <string name="child_2">Child2</string>
-    <string name="child_3">Child3</string>
+    <string name="first">First</string>
+    <string name="second">Second</string>
+    <string name="third">Third</string>
+
+    <string name="bottom_nav_bar">Bottom\nNaviBar</string>
+    <string name="view_pager">View\nPager</string>
+    <string name="exo_player">Exo\nPlayer</string>
 </resources>
