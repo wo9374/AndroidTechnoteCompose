@@ -12,3 +12,11 @@ val Pink40 = Color(0xFF7D5260)
 
 val Purple200 = Color(0xFFBB86FC)
 val Teal200 = Color(0xFF03DAC5)
+
+val TransferBlack = Color(0x59000000)
+
+val HoloRedLight = Color(0xffff4444)
+val HoloOrangeDark = Color(0xffff8800)
+val HoloGreenDark = Color(0xff669900)
+val HoloBlueLight = Color(0xff33b5e5)
+val HoloPurple = Color(0xffaa66cc)

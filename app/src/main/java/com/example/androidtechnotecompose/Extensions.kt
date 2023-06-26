@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
 
 //Modifier onClick 클릭 효과 제거
 fun Modifier.noRippleClickable(enabled: Boolean = true, onClick: () -> Unit): Modifier = composed {
@@ -37,4 +38,14 @@ fun Context.setLandscape() {
 fun Context.setPortrait() {
     val activity = this.findActivity()
     activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+}
+
+//List<Color> 셔플 확장
+fun List<Color>.shuffleColors() : List<Color>{
+    val copyColors = this.shuffled()
+    return if (this[0] == copyColors[0]){
+        shuffleColors()
+    }else{
+        copyColors
+    }
 }
