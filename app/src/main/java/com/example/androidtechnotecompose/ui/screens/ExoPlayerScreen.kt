@@ -39,9 +39,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.androidtechnotecompose.R
-import com.example.androidtechnotecompose.noRippleClickable
-import com.example.androidtechnotecompose.setLandscape
-import com.example.androidtechnotecompose.setPortrait
+import com.example.androidtechnotecompose.extensions.noRippleClickable
+import com.example.androidtechnotecompose.extensions.setLandscape
+import com.example.androidtechnotecompose.extensions.setPortrait
 import com.example.androidtechnotecompose.ui.theme.Purple200
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem

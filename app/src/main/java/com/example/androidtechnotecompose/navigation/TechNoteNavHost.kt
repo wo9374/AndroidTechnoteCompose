@@ -7,13 +7,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidtechnotecompose.ui.screens.BottomNavBarScreen
 import com.example.androidtechnotecompose.ui.screens.BottomSheetScreen
+import com.example.androidtechnotecompose.ui.screens.CameraScreen
 import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
 import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
-    BottomNavigation, ViewPager, ExoPlayer, BottomSheet
+    BottomNavigation, ViewPager, ExoPlayer, BottomSheet,
+    Camera,
 }
 
 @Composable
@@ -27,6 +29,7 @@ fun TechNoteNavHost( navController: NavHostController ){
                     viewPagerClick = { navigate(TechNoteScreen.ViewPager.name) },
                     exoPlayerClick = { navigate(TechNoteScreen.ExoPlayer.name) },
                     bottomSheetClick = { navigate(TechNoteScreen.BottomSheet.name) },
+                    cameraClick = { navigate(TechNoteScreen.Camera.name) },
                 )
             }
         }
@@ -38,6 +41,7 @@ fun TechNoteNavHost( navController: NavHostController ){
         composable(TechNoteScreen.ViewPager.name){ ViewPagerScreen() }
         composable(TechNoteScreen.ExoPlayer.name){ ExoPlayerScreen() }
         composable(TechNoteScreen.BottomSheet.name){ BottomSheetScreen() }
+        composable(TechNoteScreen.Camera.name){ CameraScreen() }
 
     }
 }

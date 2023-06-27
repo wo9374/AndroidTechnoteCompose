@@ -1,6 +1,7 @@
 package com.example.androidtechnotecompose.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,7 @@ fun HomeScreen(
     viewPagerClick : () -> Unit,
     exoPlayerClick : () -> Unit,
     bottomSheetClick : () -> Unit,
+    cameraClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -36,80 +38,96 @@ fun HomeScreen(
             )
         },
     ) {   paddingValues ->
-
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(paddingValues)
         ) {
+            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
 
-            //BottomNavigationBar
-            Button(
-                modifier = Modifier.size(90.dp, 50.dp),
-                onClick =  bottomNaviBarClick,
-                colors = ButtonDefaults
-                    .buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.Black
+                //BottomNavigationBar
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  bottomNaviBarClick,
+                    colors = ButtonDefaults
+                        .buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.Black
+                        )
+                ) {
+                    Text(
+                        text = stringResource(R.string.bottom_nav_bar),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
                     )
-            ) {
-                Text(
-                    text = stringResource(R.string.bottom_nav_bar),
-                    textAlign = TextAlign.Center,
-                    fontSize = 10.sp,
-                )
+                }
+
+                //ViewPager
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  viewPagerClick,
+                    colors = ButtonDefaults
+                        .buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.Black
+                        )
+                ) {
+                    Text(
+                        text = stringResource(R.string.view_pager),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
+                    )
+                }
+
+                //ExoPlayer
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  exoPlayerClick,
+                    colors = ButtonDefaults
+                        .buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.Black
+                        )
+                ) {
+                    Text(
+                        text = stringResource(R.string.exo_player),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
+                    )
+                }
+
+                //BottomSheet
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  bottomSheetClick,
+                    colors = ButtonDefaults
+                        .buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.Black
+                        )
+                ) {
+                    Text(
+                        text = stringResource(R.string.bottom_sheet),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
+                    )
+                }
             }
-
-            //ViewPager
-            Button(
-                modifier = Modifier.size(90.dp, 50.dp),
-                onClick =  viewPagerClick,
-                colors = ButtonDefaults
-                    .buttonColors(
+            Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  cameraClick,
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.Black
                     )
-            ) {
-                Text(
-                    text = stringResource(R.string.view_pager),
-                    textAlign = TextAlign.Center,
-                    fontSize = 10.sp,
-                )
-            }
-
-            //ExoPlayer
-            Button(
-                modifier = Modifier.size(90.dp, 50.dp),
-                onClick =  exoPlayerClick,
-                colors = ButtonDefaults
-                    .buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.Black
+                ) {
+                    Text(
+                        text = stringResource(R.string.camera),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
                     )
-            ) {
-                Text(
-                    text = stringResource(R.string.exo_player),
-                    textAlign = TextAlign.Center,
-                    fontSize = 10.sp,
-                )
-            }
-
-            //BottomSheet
-            Button(
-                modifier = Modifier.size(90.dp, 50.dp),
-                onClick =  bottomSheetClick,
-                colors = ButtonDefaults
-                    .buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.Black
-                    )
-            ) {
-                Text(
-                    text = stringResource(R.string.bottom_sheet),
-                    textAlign = TextAlign.Center,
-                    fontSize = 10.sp,
-                )
+                }
             }
         }
     }

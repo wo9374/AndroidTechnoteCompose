@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalPagerApi::class)
+@file:OptIn(ExperimentalPagerApi::class, ExperimentalPagerApi::class)
 
 package com.example.androidtechnotecompose.ui.screens
 
@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.androidtechnotecompose.shuffleColors
+import com.example.androidtechnotecompose.extensions.shuffleColors
 import com.example.androidtechnotecompose.ui.theme.HoloBlueLight
 import com.example.androidtechnotecompose.ui.theme.HoloGreenDark
 import com.example.androidtechnotecompose.ui.theme.HoloOrangeDark

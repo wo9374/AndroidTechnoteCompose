@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.androidtechnotecompose"
-        minSdk 24
+        minSdk 28
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -49,6 +49,12 @@ android {
     }
 }
 
+ext{
+    pagerVersion = "0.20.1"
+    exoPlagerVersion = "2.18.7"
+    cameraxVersion = "1.2.3"
+}
+
 dependencies {
     implementation project(':data')
     implementation project(':domain')
@@ -80,11 +86,20 @@ dependencies {
     implementation 'androidx.navigation:navigation-compose:2.6.0'
 
     //ViewPager
-    implementation "com.google.accompanist:accompanist-pager:0.20.1"
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.20.1"
+    implementation "com.google.accompanist:accompanist-pager:$pagerVersion"
+    implementation "com.google.accompanist:accompanist-pager-indicators:$pagerVersion"
 
     //ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.7'
-    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.7'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.7'
+    implementation "com.google.android.exoplayer:exoplayer-core:$exoPlagerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlagerVersion"
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlagerVersion"
+
+    //CameraX
+    implementation "androidx.camera:camera-lifecycle:$cameraxVersion"
+    implementation "androidx.camera:camera-video:$cameraxVersion"
+    implementation "androidx.camera:camera-view:$cameraxVersion"
+    implementation "androidx.camera:camera-extensions:$cameraxVersion"
+
+    //Accompanist
+    implementation 'com.google.accompanist:accompanist-permissions:0.23.1'
 }
