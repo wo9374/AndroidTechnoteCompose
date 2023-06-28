@@ -30,6 +30,7 @@ fun HomeScreen(
     exoPlayerClick : () -> Unit,
     bottomSheetClick : () -> Unit,
     cameraClick : () -> Unit,
+    collapseClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -124,6 +125,21 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.camera),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
+                    )
+                }
+
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  collapseClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.collapse_toolbar),
                         textAlign = TextAlign.Center,
                         fontSize = 10.sp,
                     )

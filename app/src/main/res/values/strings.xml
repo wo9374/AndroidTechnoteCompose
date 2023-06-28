@@ -10,6 +10,7 @@
     <string name="exo_player">Exo\nPlayer</string>
     <string name="bottom_sheet">Bottom\nSheet</string>
     <string name="camera">Camera</string>
+    <string name="collapse_toolbar">Collapse\nToolbar</string>
 
     <string name="modal_sheet">ModalSheet</string>
     <string name="toggle_full_screen">Toggle Fullscreen</string>
