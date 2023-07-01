@@ -11,12 +11,13 @@ import com.example.androidtechnotecompose.ui.screens.CameraScreen
 import com.example.androidtechnotecompose.ui.screens.CollapsingToolbarScreen
 import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
+import com.example.androidtechnotecompose.ui.screens.RoomScreen
 import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
     BottomNavigation, ViewPager, ExoPlayer, BottomSheet,
-    Camera, CollapseToolbar
+    Camera, CollapseToolbar, Room
 }
 
 @Composable
@@ -31,7 +32,8 @@ fun TechNoteNavHost( navController: NavHostController ){
                     exoPlayerClick = { navigate(TechNoteScreen.ExoPlayer.name) },
                     bottomSheetClick = { navigate(TechNoteScreen.BottomSheet.name) },
                     cameraClick = { navigate(TechNoteScreen.Camera.name) },
-                    collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name)}
+                    collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name)},
+                    roomClick = { navigate(TechNoteScreen.Room.name)},
                 )
             }
         }
@@ -45,6 +47,7 @@ fun TechNoteNavHost( navController: NavHostController ){
         composable(TechNoteScreen.BottomSheet.name){ BottomSheetScreen() }
         composable(TechNoteScreen.Camera.name){ CameraScreen() }
         composable(TechNoteScreen.CollapseToolbar.name){ CollapsingToolbarScreen() }
+        composable(TechNoteScreen.Room.name){ RoomScreen() }
     }
 }
 

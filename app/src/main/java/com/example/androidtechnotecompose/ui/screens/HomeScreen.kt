@@ -35,6 +35,7 @@ fun HomeScreen(
     bottomSheetClick : () -> Unit,
     cameraClick : () -> Unit,
     collapseClick : () -> Unit,
+    roomClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -123,6 +124,7 @@ fun HomeScreen(
                 }
             }
             Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+                //Camera
                 Button(
                     modifier = Modifier.size(90.dp, 50.dp),
                     onClick =  cameraClick,
@@ -138,6 +140,7 @@ fun HomeScreen(
                     )
                 }
 
+                //Collapse Toolbar
                 Button(
                     modifier = Modifier.size(90.dp, 50.dp),
                     onClick =  collapseClick,
@@ -148,6 +151,22 @@ fun HomeScreen(
                 ) {
                     Text(
                         text = stringResource(R.string.collapse_toolbar),
+                        textAlign = TextAlign.Center,
+                        fontSize = 10.sp,
+                    )
+                }
+
+                //Room
+                Button(
+                    modifier = Modifier.size(90.dp, 50.dp),
+                    onClick =  roomClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.room),
                         textAlign = TextAlign.Center,
                         fontSize = 10.sp,
                     )

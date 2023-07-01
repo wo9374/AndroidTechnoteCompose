@@ -96,7 +96,7 @@ fun CameraScreen() {
                                 outputDirectory = if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir,
                                 executor = context.mainExecutor,
                                 audioEnabled = audioEnabled.value
-                            ) { event ->
+                            ) { //event ->
                                 //녹화 하는 동안 발생하는 이벤트 처리
                             }
                         }
