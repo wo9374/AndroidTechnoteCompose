@@ -13,3 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+data/schemas/com.example.data.database.ItemsDatabase/1.json
