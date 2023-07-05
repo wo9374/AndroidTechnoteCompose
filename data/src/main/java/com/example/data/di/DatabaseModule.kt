@@ -2,8 +2,8 @@ package com.example.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.data.database.NumbersDao
-import com.example.data.database.NumbersDatabase
+import com.example.data.database.ItemsDao
+import com.example.data.database.ItemsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,13 +20,13 @@ class DatabaseModule{
      * */
     @Provides
     @Singleton
-    fun provideLocalClinicDao(database: NumbersDatabase): NumbersDao = database.dao()
+    fun provideLocalClinicDao(database: ItemsDatabase): ItemsDao = database.dao()
 
     /**
      * Database instance 생성 명시
      * */
     @Provides
     @Singleton
-    fun provideClinicDatabase(@ApplicationContext appContext: Context): NumbersDatabase =
-        Room.databaseBuilder(appContext, NumbersDatabase::class.java, "number_room").build()
+    fun provideClinicDatabase(@ApplicationContext appContext: Context): ItemsDatabase =
+        Room.databaseBuilder(appContext, ItemsDatabase::class.java, "item_room").build()
 }

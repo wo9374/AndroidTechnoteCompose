@@ -1,16 +1,14 @@
 package com.example.androidtechnotecompose.di
 
-import android.content.Context
 import com.example.data.datasource.LocalDataSourceImpl
-import com.example.data.repository.NumberRepositoryImpl
-import com.example.domain.repository.NumbersRepository
-import com.example.domain.usecase.ClearNumbersUseCase
-import com.example.domain.usecase.GetNumbersUseCase
-import com.example.domain.usecase.InsertNumberUseCase
+import com.example.data.repository.ItemRepositoryImpl
+import com.example.domain.repository.ItemsRepository
+import com.example.domain.usecase.ClearItemsUseCase
+import com.example.domain.usecase.GetItemsUseCase
+import com.example.domain.usecase.InsertItemUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,13 +17,13 @@ import javax.inject.Singleton
 class UseCaseModule {
 
     @Provides
-    fun provideGetNumbersUseCase(repository: NumbersRepository) = GetNumbersUseCase(repository)
+    fun provideGetItemsUseCase(repository: ItemsRepository) = GetItemsUseCase(repository)
 
     @Provides
-    fun provideInsertNumberUseCase(repository: NumbersRepository) = InsertNumberUseCase(repository)
+    fun provideInsertItemUseCase(repository: ItemsRepository) = InsertItemUseCase(repository)
 
     @Provides
-    fun provideClearNumbersUseCase(repository: NumbersRepository) = ClearNumbersUseCase(repository)
+    fun provideClearItemsUseCase(repository: ItemsRepository) = ClearItemsUseCase(repository)
 }
 
 @Module
@@ -34,5 +32,5 @@ class RepositoryModule{
 
     @Provides
     @Singleton
-    fun provideNumberRepository(localDataSourceImpl: LocalDataSourceImpl): NumbersRepository = NumberRepositoryImpl(localDataSourceImpl)
+    fun provideItemRepository(localDataSourceImpl: LocalDataSourceImpl): ItemsRepository = ItemRepositoryImpl(localDataSourceImpl)
 }

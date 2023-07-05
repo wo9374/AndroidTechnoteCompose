@@ -16,4 +16,6 @@
     <string name="modal_sheet">ModalSheet</string>
     <string name="toggle_full_screen">Toggle Fullscreen</string>
     <string name="hide_sheet">Hide Sheet</string>
+
+    <string name="add_text">추가할 Text를 입력해주세요.</string>
 </resources>

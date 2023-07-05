@@ -1,15 +1,15 @@
 package com.example.data.model
 
-import com.example.domain.entity.NumberEntity
+import com.example.domain.entity.ItemEntity
 
 /**
- * data layer 에서 사용할 data model 인 [NumberModel]을
- * domain layer 에 정의된 entity [NumberEntity]로 변환
+ * data layer 에서 사용할 data model 인 [ItemModel]을
+ * domain layer 에 정의된 entity [ItemEntity]로 변환
  */
-fun NumberModel.toEntity(): NumberEntity = NumberEntity(id = this.id, value = this.value)
+fun ItemModel.toEntity(): ItemEntity = ItemEntity(id = this.id, strValue = this.strValue)
 
 /**
- * domain layer 에 정의된 있는 entity [NumberEntity]를
- * data layer 에서 사용할 data model 인 [NumberModel]로 변환
+ * domain layer 에 정의된 있는 entity [ItemEntity]를
+ * data layer 에서 사용할 data model 인 [ItemModel]로 변환
  */
-fun NumberEntity.toModel(): NumberModel = NumberModel(value = this.value)
+fun ItemEntity.toModel(): ItemModel = ItemModel(strValue = this.strValue)

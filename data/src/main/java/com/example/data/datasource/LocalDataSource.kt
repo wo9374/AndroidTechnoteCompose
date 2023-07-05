@@ -1,27 +1,27 @@
 package com.example.data.datasource
 
-import com.example.data.database.NumbersDao
-import com.example.data.model.NumberModel
+import com.example.data.database.ItemsDao
+import com.example.data.model.ItemModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 interface LocalDataSource {
-    fun getNumbers(): Flow<List<NumberModel>>
-    suspend fun insertNumber(numberModel: NumberModel)
-    suspend fun clearNumbers()
+    fun getItems(): Flow<List<ItemModel>>
+    suspend fun insertItem(itemModel: ItemModel)
+    suspend fun clearItems()
 }
 
-class LocalDataSourceImpl @Inject constructor(private val dao: NumbersDao): LocalDataSource{
+class LocalDataSourceImpl @Inject constructor(private val dao: ItemsDao): LocalDataSource{
 
-    override fun getNumbers(): Flow<List<NumberModel>> {
-        return dao.getNumbers()
+    override fun getItems(): Flow<List<ItemModel>> {
+        return dao.getItems()
     }
 
-    override suspend fun insertNumber(numberModel: NumberModel) {
-        dao.insertNumber(numberModel)
+    override suspend fun insertItem(itemModel: ItemModel) {
+        dao.insertItem(itemModel)
     }
 
-    override suspend fun clearNumbers() {
-        dao.clearNumbers()
+    override suspend fun clearItems() {
+        dao.clearItems()
     }
 }

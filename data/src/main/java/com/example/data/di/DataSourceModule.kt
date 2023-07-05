@@ -1,6 +1,6 @@
 package com.example.data.di
 
-import com.example.data.database.NumbersDao
+import com.example.data.database.ItemsDao
 import com.example.data.datasource.LocalDataSource
 import com.example.data.datasource.LocalDataSourceImpl
 import dagger.Module
@@ -14,5 +14,5 @@ import javax.inject.Singleton
 class DataSourceModule {
     @Provides
     @Singleton
-    fun provideLocalDataSource(dao: NumbersDao): LocalDataSource = LocalDataSourceImpl(dao)
+    fun provideLocalDataSource(dao: ItemsDao): LocalDataSource = LocalDataSourceImpl(dao)
 }
