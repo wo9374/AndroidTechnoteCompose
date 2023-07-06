@@ -8,6 +8,7 @@ import javax.inject.Inject
 interface LocalDataSource {
     fun getItems(): Flow<List<ItemModel>>
     suspend fun insertItem(itemModel: ItemModel)
+    suspend fun deleteItem(itemModel: ItemModel)
     suspend fun clearItems()
 }
 
@@ -19,6 +20,10 @@ class LocalDataSourceImpl @Inject constructor(private val dao: ItemsDao): LocalD
 
     override suspend fun insertItem(itemModel: ItemModel) {
         dao.insertItem(itemModel)
+    }
+
+    override suspend fun deleteItem(itemModel: ItemModel) {
+        dao.deleteItem(itemModel)
     }
 
     override suspend fun clearItems() {

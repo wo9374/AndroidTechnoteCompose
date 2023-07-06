@@ -4,6 +4,7 @@ import com.example.data.datasource.LocalDataSourceImpl
 import com.example.data.repository.ItemRepositoryImpl
 import com.example.domain.repository.ItemsRepository
 import com.example.domain.usecase.ClearItemsUseCase
+import com.example.domain.usecase.DeleteItemUseCase
 import com.example.domain.usecase.GetItemsUseCase
 import com.example.domain.usecase.InsertItemUseCase
 import dagger.Module
@@ -21,6 +22,8 @@ class UseCaseModule {
 
     @Provides
     fun provideInsertItemUseCase(repository: ItemsRepository) = InsertItemUseCase(repository)
+    @Provides
+    fun provideDeleteItemUseCase(repository: ItemsRepository) = DeleteItemUseCase(repository)
 
     @Provides
     fun provideClearItemsUseCase(repository: ItemsRepository) = ClearItemsUseCase(repository)

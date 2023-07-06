@@ -16,6 +16,12 @@ class InsertItemUseCase(private val repository: ItemsRepository) {
     }
 }
 
+class DeleteItemUseCase(private val repository: ItemsRepository){
+    suspend operator fun invoke(itemEntity: ItemEntity){
+        repository.deleteItem(itemEntity)
+    }
+}
+
 class ClearItemsUseCase(private val repository: ItemsRepository) {
     suspend operator fun invoke() {
         repository.clearItems()

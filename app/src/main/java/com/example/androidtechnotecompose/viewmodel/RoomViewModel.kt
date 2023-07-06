@@ -2,7 +2,9 @@ package com.example.androidtechnotecompose.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.entity.ItemEntity
 import com.example.domain.usecase.ClearItemsUseCase
+import com.example.domain.usecase.DeleteItemUseCase
 import com.example.domain.usecase.GetItemsUseCase
 import com.example.domain.usecase.InsertItemUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class RoomViewModel @Inject constructor(
     private val getItemsUseCase: GetItemsUseCase,
     private val insertItemUseCase: InsertItemUseCase,
+    private val deleteItemUseCase: DeleteItemUseCase,
     private val clearItemsUseCase: ClearItemsUseCase,
 ) : ViewModel() {
 
@@ -26,6 +29,10 @@ class RoomViewModel @Inject constructor(
 
     fun insertItem(str: String) = viewModelScope.launch {
         insertItemUseCase(str)
+    }
+
+    fun deleteItem(itemEntity: ItemEntity) = viewModelScope.launch {
+        deleteItemUseCase(itemEntity)
     }
 
     fun clearItems() = viewModelScope.launch {

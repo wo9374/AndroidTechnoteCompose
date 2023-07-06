@@ -2,6 +2,7 @@ package com.example.data.database
 
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.RoomDatabase
@@ -20,6 +21,9 @@ interface ItemsDao{
 
     @Insert
     suspend fun insertItem(itemModel: ItemModel)
+
+    @Delete
+    suspend fun deleteItem(itemModel: ItemModel)
 
     @Query("DELETE FROM items")
     suspend fun clearItems()

@@ -29,6 +29,11 @@ class ItemRepositoryImpl @Inject constructor(private val dataSource: LocalDataSo
         // domain layer 의 UseCase 에서 파라미터로 넘겨준 ItemEntity Data 를 Database 에서 사용할 ItemModel 로 변환 insert 호출
     }
 
+    override suspend fun deleteItem(itemEntity: ItemEntity) {
+        val itemModel = itemEntity.toModel()
+        dataSource.deleteItem(itemModel)
+    }
+
     override suspend fun clearItems() {
         dataSource.clearItems()
     }
