@@ -96,8 +96,8 @@ fun RoomScreen(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        menuExpanded = false
                                         roomViewModel.deleteItem(it)
+                                        menuExpanded = false
                                     }
                                 ) {
                                         Text(text = "삭제")
