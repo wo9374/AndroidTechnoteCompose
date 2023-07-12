@@ -133,6 +133,7 @@ fun RoomScreen(
                 if (textState.value.isNotEmpty()) {
                     coroutineScope.launch {
                         roomViewModel.insertItem(textState.value)
+                        textState.value = ""
                     }
                 } else {
                     Toast.makeText(context, "추가할 Text를 입력해주세요.", Toast.LENGTH_SHORT).show()
