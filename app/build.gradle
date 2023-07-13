@@ -51,7 +51,7 @@ android {
 
 ext{
     pagerVersion = "0.20.1"
-    exoPlagerVersion = "2.18.7"
+    exoPlagerVersion = "2.19.0"
     cameraxVersion = "1.2.3"
 }
 
