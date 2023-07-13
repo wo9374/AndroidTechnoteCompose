@@ -1,6 +1,4 @@
-@file:OptIn(
-    ExperimentalMaterial3Api::class
-)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.example.androidtechnotecompose.ui.screens
 
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,16 +62,20 @@ fun RoomScreen(
     val list by roomViewModel.numbers.collectAsState()
     val scrollState = rememberLazyListState()
 
+    val textFieldHeight = 60.dp
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         LazyColumn(
             state = scrollState,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 4.dp)
+                .fillMaxWidth()
+                .padding(top = 4.dp, bottom = textFieldHeight)
         ) {
             items(items = list) {
+
                 var menuExpanded by remember { mutableStateOf(false) }
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -100,7 +103,7 @@ fun RoomScreen(
                                         menuExpanded = false
                                     }
                                 ) {
-                                        Text(text = "삭제")
+                                    Text(text = "삭제")
                                 }
                             }
                         }
@@ -112,6 +115,7 @@ fun RoomScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(textFieldHeight)
                 .background(Color.DarkGray)
                 .align(Alignment.BottomCenter),
             verticalAlignment = Alignment.CenterVertically,
@@ -119,6 +123,7 @@ fun RoomScreen(
         ) {
 
             val textState = remember { mutableStateOf("") }
+
             TextField(
                 value = textState.value,
                 onValueChange = { textValue ->
@@ -167,7 +172,10 @@ fun CardContent(
         }
 
         if (menu != null) {
-            Box(modifier = Modifier.align(Alignment.Top), content = menu)
+            Box(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                content = menu
+            )
         }
     }
 }
