@@ -23,10 +23,13 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -124,10 +128,18 @@ fun RoomScreen(
 
             val textState = remember { mutableStateOf("") }
 
-            TextField(
+            val focusManager = LocalFocusManager.current
+
+            OutlinedTextField(
                 value = textState.value,
                 onValueChange = { textValue ->
                     textState.value = textValue
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ThumbUp,
+                        contentDescription = "Email Icon"
+                    )
                 },
                 placeholder = {
                     Text(text = stringResource(R.string.add_text))
@@ -139,6 +151,7 @@ fun RoomScreen(
                     coroutineScope.launch {
                         roomViewModel.insertItem(textState.value)
                         textState.value = ""
+                        focusManager.clearFocus()
                     }
                 } else {
                     Toast.makeText(context, "추가할 Text를 입력해주세요.", Toast.LENGTH_SHORT).show()
