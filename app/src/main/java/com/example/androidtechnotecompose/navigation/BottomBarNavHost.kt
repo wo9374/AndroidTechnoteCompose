@@ -14,14 +14,14 @@ import com.example.androidtechnotecompose.ui.screens.BottomNaviItem
 
 
 @Composable
-fun BottomBarNavHostScreen(navHostController: NavHostController, innerPadding : PaddingValues){
+fun BottomBarNavHostScreen(navHostController: NavHostController, innerPadding: PaddingValues) {
     NavHost(
         navController = navHostController,
         startDestination = BottomNaviItem.Child1.screenRoute,
         Modifier.padding(innerPadding)
-    ){
-        composable(BottomNaviItem.Child1.screenRoute){ BotBarChildScreen1() }
-        composable(BottomNaviItem.Child2.screenRoute){ BotBarChildScreen2() }
-        composable(BottomNaviItem.Child3.screenRoute){ BotBarChildScreen3() }
+    ) {
+        composable(BottomNaviItem.Child1.screenRoute) { BotBarChildScreen1() }
+        composable(BottomNaviItem.Child2.screenRoute) { BotBarChildScreen2() }
+        composable(BottomNaviItem.Child3.screenRoute) { BotBarChildScreen3() }
     }
 }

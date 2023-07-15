@@ -96,8 +96,9 @@ fun ExoPlayerScreen() {
         var shouldShowControls by remember { mutableStateOf(true) }
 
         AndroidView(
-            modifier = Modifier.noRippleClickable{
-                shouldShowControls = shouldShowControls.not() //VideoView 를 클릭할 때 PlayerControls OnOFf
+            modifier = Modifier.noRippleClickable {
+                shouldShowControls =
+                    shouldShowControls.not() //VideoView 를 클릭할 때 PlayerControls OnOFf
             },
             factory = {
                 StyledPlayerView(context).apply {

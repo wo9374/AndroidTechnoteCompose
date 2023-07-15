@@ -22,6 +22,7 @@ class UseCaseModule {
 
     @Provides
     fun provideInsertItemUseCase(repository: ItemsRepository) = InsertItemUseCase(repository)
+
     @Provides
     fun provideDeleteItemUseCase(repository: ItemsRepository) = DeleteItemUseCase(repository)
 
@@ -31,9 +32,10 @@ class UseCaseModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule{
+class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideItemRepository(localDataSourceImpl: LocalDataSourceImpl): ItemsRepository = ItemRepositoryImpl(localDataSourceImpl)
+    fun provideItemRepository(localDataSourceImpl: LocalDataSourceImpl): ItemsRepository =
+        ItemRepositoryImpl(localDataSourceImpl)
 }

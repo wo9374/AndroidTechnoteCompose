@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 
 @Composable
-fun CollapsingToolbarScreen(){
+fun CollapsingToolbarScreen() {
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -42,9 +42,9 @@ fun CollapsingToolbarScreen(){
     ) { innerPadding ->
 
         LazyColumn(
-           modifier = Modifier.padding(innerPadding)
-        ){
-            items(count =50) {
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            items(count = 50) {
                 ListItem(
                     text = { Text(text = "Item $it") },
                     icon = {

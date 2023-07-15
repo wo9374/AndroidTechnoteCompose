@@ -58,7 +58,7 @@ fun BottomNavBarScreen(navHostController: NavHostController) {
 }
 
 @Composable
-fun BottomBar(navHostController: NavHostController){
+fun BottomBar(navHostController: NavHostController) {
     val items = listOf(
         BottomNaviItem.Child1,
         BottomNaviItem.Child2,
@@ -73,7 +73,7 @@ fun BottomBar(navHostController: NavHostController){
             NavigationBarItem(
                 selected = currentRoute == item.screenRoute,
                 onClick = {
-                    navHostController.navigate(item.screenRoute){
+                    navHostController.navigate(item.screenRoute) {
                         popUpTo(navHostController.graph.findStartDestination().id) {
                             saveState = true
                         }

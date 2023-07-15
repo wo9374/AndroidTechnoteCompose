@@ -42,7 +42,8 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private data class ColorData(val colors : List<Color>)
+private data class ColorData(val colors: List<Color>)
+
 private val colorData = ColorData(
     listOf(HoloRedLight, HoloOrangeDark, HoloGreenDark, HoloBlueLight, HoloPurple)
 )
@@ -62,7 +63,7 @@ fun ViewPagerScreen() {
 }
 
 @Composable
-fun RowPager(colorList: List<Color>){
+fun RowPager(colorList: List<Color>) {
     val rowState = rememberPagerState()
 
     //드래그 판단 AutoScroll Stop
@@ -71,7 +72,7 @@ fun RowPager(colorList: List<Color>){
         LaunchedEffect(key1 = rowState.currentPage) {
             launch {
                 delay(3000)
-                with(rowState){
+                with(rowState) {
                     val target = if (currentPage < pageCount - 1) currentPage + 1 else 0
 
                     tween<Float>(
@@ -88,7 +89,7 @@ fun RowPager(colorList: List<Color>){
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp),
-    ){
+    ) {
         HorizontalPager(
             count = colorList.size,
             state = rowState
@@ -103,7 +104,7 @@ fun RowPager(colorList: List<Color>){
                     textAlign = TextAlign.Center,
                     fontSize = 32.sp,
                     color = Color.White,
-                    text = "${page+1} Page",
+                    text = "${page + 1} Page",
                 )
             }
 
@@ -129,15 +130,15 @@ fun RowPager(colorList: List<Color>){
 }
 
 @Composable
-fun ColumnPager(colorList: List<Color>){
+fun ColumnPager(colorList: List<Color>) {
     val columnState = rememberPagerState()
 
     val isDragged by columnState.interactionSource.collectIsDraggedAsState()
-    if (!isDragged){
+    if (!isDragged) {
         LaunchedEffect(key1 = columnState.currentPage) {
             launch {
                 delay(3000)
-                with(columnState){
+                with(columnState) {
                     val target = if (currentPage < pageCount - 1) currentPage + 1 else 0
 
                     tween<Float>(
@@ -154,7 +155,7 @@ fun ColumnPager(colorList: List<Color>){
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp),
-    ){
+    ) {
         VerticalPager(
             count = colorList.size,
             state = columnState
@@ -164,12 +165,12 @@ fun ColumnPager(colorList: List<Color>){
                     .fillMaxSize()
                     .background(colorList[page]),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 Text(
                     textAlign = TextAlign.Center,
                     fontSize = 32.sp,
                     color = Color.White,
-                    text = "${page+1} Page",
+                    text = "${page + 1} Page",
                 )
             }
         }
@@ -195,12 +196,12 @@ fun ColumnPager(colorList: List<Color>){
 
 @Preview(showBackground = true)
 @Composable
-fun RowPagerPreview(){
+fun RowPagerPreview() {
     RowPager(colorList = colorData.colors)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ColumnPagerPreview(){
+fun ColumnPagerPreview() {
     ColumnPager(colorList = colorData.copy().colors.shuffled())
 }

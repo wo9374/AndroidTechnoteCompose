@@ -48,9 +48,11 @@ fun TechNoteComposeTheme(
         dynamicColor && isDarkTheme -> {
             dynamicDarkColorScheme(LocalContext.current)
         }
+
         dynamicColor && !isDarkTheme -> {
             dynamicLightColorScheme(LocalContext.current)
         }
+
         isDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

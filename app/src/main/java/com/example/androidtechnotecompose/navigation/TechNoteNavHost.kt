@@ -21,10 +21,10 @@ enum class TechNoteScreen {
 }
 
 @Composable
-fun TechNoteNavHost( navController: NavHostController ){
-    NavHost(navController = navController, startDestination = TechNoteScreen.Home.name){
+fun TechNoteNavHost(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = TechNoteScreen.Home.name) {
 
-        composable(TechNoteScreen.Home.name){
+        composable(TechNoteScreen.Home.name) {
             navController.apply {
                 HomeScreen(
                     bottomNaviBarClick = { navigate(TechNoteScreen.BottomNavigation.name) },
@@ -32,22 +32,22 @@ fun TechNoteNavHost( navController: NavHostController ){
                     exoPlayerClick = { navigate(TechNoteScreen.ExoPlayer.name) },
                     bottomSheetClick = { navigate(TechNoteScreen.BottomSheet.name) },
                     cameraClick = { navigate(TechNoteScreen.Camera.name) },
-                    collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name)},
-                    roomClick = { navigate(TechNoteScreen.Room.name)},
+                    collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name) },
+                    roomClick = { navigate(TechNoteScreen.Room.name) },
                 )
             }
         }
 
-        composable(TechNoteScreen.BottomNavigation.name){
+        composable(TechNoteScreen.BottomNavigation.name) {
             val botNavHostController = rememberNavController()
             BottomNavBarScreen(botNavHostController)
         }
-        composable(TechNoteScreen.ViewPager.name){ ViewPagerScreen() }
-        composable(TechNoteScreen.ExoPlayer.name){ ExoPlayerScreen() }
-        composable(TechNoteScreen.BottomSheet.name){ BottomSheetScreen() }
-        composable(TechNoteScreen.Camera.name){ CameraScreen() }
-        composable(TechNoteScreen.CollapseToolbar.name){ CollapsingToolbarScreen() }
-        composable(TechNoteScreen.Room.name){ RoomScreen() }
+        composable(TechNoteScreen.ViewPager.name) { ViewPagerScreen() }
+        composable(TechNoteScreen.ExoPlayer.name) { ExoPlayerScreen() }
+        composable(TechNoteScreen.BottomSheet.name) { BottomSheetScreen() }
+        composable(TechNoteScreen.Camera.name) { CameraScreen() }
+        composable(TechNoteScreen.CollapseToolbar.name) { CollapsingToolbarScreen() }
+        composable(TechNoteScreen.Room.name) { RoomScreen() }
     }
 }
 

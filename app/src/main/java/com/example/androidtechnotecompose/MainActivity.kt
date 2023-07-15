@@ -23,10 +23,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TechNoteApp(){
+fun TechNoteApp() {
     val navController = rememberNavController()
 
-    TechNoteComposeTheme{
+    TechNoteComposeTheme {
         Surface {
             TechNoteNavHost(navController)
         }

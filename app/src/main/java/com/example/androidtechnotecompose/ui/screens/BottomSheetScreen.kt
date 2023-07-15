@@ -3,8 +3,6 @@
 package com.example.androidtechnotecompose.ui.screens
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -161,7 +159,9 @@ fun PersistentSheet(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(
-                    modifier = Modifier.size(70.dp, dividerHeight).background(Color.White)
+                    modifier = Modifier
+                        .size(70.dp, dividerHeight)
+                        .background(Color.White)
                 )
                 Spacer(
                     modifier = Modifier.height(peekHeight - (sheetPadding + dividerHeight))
@@ -190,9 +190,9 @@ fun PersistentSheet(
         },
 //        sheetBackgroundColor = Color.Transparent,
 //        sheetElevation = 0.dp
-    /*
-    * 특정 부분의 PersistentSheet 를 구현할 때 background, Shadow 제거
-    * */
+        /*
+        * 특정 부분의 PersistentSheet 를 구현할 때 background, Shadow 제거
+        * */
     ) {
         Box(
             modifier = Modifier

@@ -20,11 +20,11 @@ fun Modifier.noRippleClickable(enabled: Boolean = true, onClick: () -> Unit): Mo
 }
 
 //List<Color> 셔플 확장
-fun List<Color>.shuffleColors() : List<Color>{
+fun List<Color>.shuffleColors(): List<Color> {
     val copyColors = this.shuffled()
-    return if (this[0] == copyColors[0]){
+    return if (this[0] == copyColors[0]) {
         shuffleColors()
-    }else{
+    } else {
         copyColors
     }
 }
@@ -45,9 +45,11 @@ fun getTextToShowGivenPermissions(
             revokedPermissionsSize > 1 && i == revokedPermissionsSize - 2 -> {
                 textToShow.append("\n")
             }
+
             i == revokedPermissionsSize - 1 -> {
                 textToShow.append(" ")
             }
+
             else -> {
                 textToShow.append(", ")
             }
