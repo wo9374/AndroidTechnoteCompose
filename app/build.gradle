@@ -49,7 +49,7 @@ android {
     }
 }
 
-ext{
+ext {
     pagerVersion = "0.20.1"
     exoPlagerVersion = "2.19.0"
     cameraxVersion = "1.2.3"
