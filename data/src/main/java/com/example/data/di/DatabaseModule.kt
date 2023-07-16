@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class DatabaseModule{
+class DatabaseModule {
     /**
      * Dao instance 생성 명시
      * */

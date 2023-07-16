@@ -12,7 +12,7 @@ interface LocalDataSource {
     suspend fun clearItems()
 }
 
-class LocalDataSourceImpl @Inject constructor(private val dao: ItemsDao): LocalDataSource{
+class LocalDataSourceImpl @Inject constructor(private val dao: ItemsDao) : LocalDataSource {
 
     override fun getItems(): Flow<List<ItemModel>> {
         return dao.getItems()

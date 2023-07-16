@@ -10,5 +10,5 @@ import androidx.room.PrimaryKey
 data class ItemModel(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val strValue : String
+    val strValue: String
 )

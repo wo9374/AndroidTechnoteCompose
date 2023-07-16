@@ -14,7 +14,8 @@ import javax.inject.Inject
  * domain layer 에 정의한 [ItemsRepository] interface 의 구현 클래스.
  * Repository 는 다양한 DataSource 를 상황에 맞게 사용하여 UseCase 의 요청을 처리할 수 있어야 함
  */
-class ItemRepositoryImpl @Inject constructor(private val dataSource: LocalDataSource) : ItemsRepository {
+class ItemRepositoryImpl @Inject constructor(private val dataSource: LocalDataSource) :
+    ItemsRepository {
 
     override fun getItems(): Flow<List<ItemEntity>> {
         return dataSource.getItems().map { entityList: List<ItemModel> ->

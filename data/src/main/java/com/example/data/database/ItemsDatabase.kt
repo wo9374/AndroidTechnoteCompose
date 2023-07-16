@@ -10,12 +10,12 @@ import com.example.data.model.ItemModel
 import kotlinx.coroutines.flow.Flow
 
 @Database(entities = [ItemModel::class], version = 1)
-abstract class ItemsDatabase : RoomDatabase(){
+abstract class ItemsDatabase : RoomDatabase() {
     abstract fun dao(): ItemsDao
 }
 
 @Dao
-interface ItemsDao{
+interface ItemsDao {
     @Query("SELECT * FROM items")
     fun getItems(): Flow<List<ItemModel>> // 쿼리 결과를 바로 Flow Type 으로 return
 
