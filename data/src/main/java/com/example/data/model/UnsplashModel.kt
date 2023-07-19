@@ -15,10 +15,10 @@ data class Picture(
     @SerializedName("id")
     val id: String,
     @SerializedName("urls")
-    val url: Url
+    val pictureUrl: PictureUrl
 )
 
-data class Url(
+data class PictureUrl(
     @SerializedName("thumb")
     val url: String
 )

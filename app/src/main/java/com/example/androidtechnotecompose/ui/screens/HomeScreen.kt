@@ -36,6 +36,7 @@ fun HomeScreen(
     cameraClick: () -> Unit,
     collapseClick: () -> Unit,
     roomClick: () -> Unit,
+    pagingClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -82,6 +83,9 @@ fun HomeScreen(
 
                 //Room
                 FunctionButton(stringResource(R.string.room), roomClick)
+
+                //Paging
+                FunctionButton(stringResource(R.string.paging), pagingClick)
             }
         }
     }

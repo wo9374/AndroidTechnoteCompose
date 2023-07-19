@@ -1,22 +1,20 @@
 package com.example.data.remote.datasource
 
+import com.example.data.model.Picture
 import com.example.data.model.UnsplashModel
 import com.example.data.remote.api.UnsplashAPI
-import retrofit2.Response
 import javax.inject.Inject
 
-//로드에 사용되는 초기 키
-private const val STARTING_KEY = 0
-private const val LOAD_DELAY_MILLIS = 3_000L
-
 interface RemoteDataSource {
-    suspend fun getUnsplashPhoto(page: Int, query: String, perPage: Int): Response<UnsplashModel>
+    suspend fun getUnsplashPhoto(apiKey: String, pageNumber: Int): List<Picture>
 }
 
 class RemoteDataSourceImpl @Inject constructor(
-    private val unsplashAPI: UnsplashAPI
+    private val api: UnsplashAPI
 ) : RemoteDataSource {
-
-    override suspend fun getUnsplashPhoto(page: Int, query: String, perPage: Int): Response<UnsplashModel> =
-        unsplashAPI.getPhotoList(page, query, perPage = perPage)
+    override suspend fun getUnsplashPhoto(apiKey: String, pageNumber: Int): List<Picture> {
+        val response = api.getPhotoList(page = pageNumber, key = apiKey)
+        check(response.isSuccessful)
+        return response.body()?.results ?: emptyList()
+    }
 }

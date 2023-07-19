@@ -11,13 +11,14 @@ import com.example.androidtechnotecompose.ui.screens.CameraScreen
 import com.example.androidtechnotecompose.ui.screens.CollapsingToolbarScreen
 import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
 import com.example.androidtechnotecompose.ui.screens.HomeScreen
+import com.example.androidtechnotecompose.ui.screens.PagingScreen
 import com.example.androidtechnotecompose.ui.screens.RoomScreen
 import com.example.androidtechnotecompose.ui.screens.ViewPagerScreen
 
 enum class TechNoteScreen {
     Home,
     BottomNavigation, ViewPager, ExoPlayer, BottomSheet,
-    Camera, CollapseToolbar, Room
+    Camera, CollapseToolbar, Room, Paging,
 }
 
 @Composable
@@ -34,6 +35,7 @@ fun TechNoteNavHost(navController: NavHostController) {
                     cameraClick = { navigate(TechNoteScreen.Camera.name) },
                     collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name) },
                     roomClick = { navigate(TechNoteScreen.Room.name) },
+                    pagingClick = { navigate(TechNoteScreen.Paging.name)},
                 )
             }
         }
@@ -48,6 +50,7 @@ fun TechNoteNavHost(navController: NavHostController) {
         composable(TechNoteScreen.Camera.name) { CameraScreen() }
         composable(TechNoteScreen.CollapseToolbar.name) { CollapsingToolbarScreen() }
         composable(TechNoteScreen.Room.name) { RoomScreen() }
+        composable(TechNoteScreen.Paging.name) { PagingScreen() }
     }
 }
 
@@ -62,7 +65,7 @@ fun NavGraphBuilder.loginGraph(navController: NavController) {
     }
 }*/
 
-/*분할된 그래프들을 정리하려면 다음과 같이 합니다.
+/*분할된 그래프들을 정리하려면 다음과 같이
 NavHost(navController, startDestination = "home") {
     communityGraph(navController)
     loginGraph(navController)
