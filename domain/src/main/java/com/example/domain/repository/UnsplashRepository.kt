@@ -5,5 +5,7 @@ import com.example.domain.entity.UnsplashEntity
 import kotlinx.coroutines.flow.Flow
 
 interface UnsplashRepository {
+
     suspend fun getUnsplashPhoto(): Flow<PagingData<UnsplashEntity>>
+
 }

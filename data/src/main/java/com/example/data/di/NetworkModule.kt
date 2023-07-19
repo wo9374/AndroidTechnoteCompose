@@ -46,7 +46,7 @@ object NetworkModule {
 
     @Provides
     fun provideConverterFactory(): GsonConverterFactory {
-        val gson : Gson = GsonBuilder()
+        val gson: Gson = GsonBuilder()
             .setLenient()
             .create()
         return GsonConverterFactory.create(gson)

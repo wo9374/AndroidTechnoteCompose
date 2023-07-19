@@ -1,6 +1,5 @@
 package com.example.data.remote.api
 
-import com.example.data.BuildConfig
 import com.example.data.model.UnsplashModel
 import retrofit2.Response
 import retrofit2.http.GET
@@ -12,7 +11,7 @@ interface UnsplashAPI {
     suspend fun getPhotoList(
         @Query("page") page: Int,
         @Query("query") query: String = "android",    //검색 키워드
-        @Query("client_id") key: String = BuildConfig.UNSPLASH_ACCESS_KEY,    //Key 값
-        @Query("per_page") perPage: Int  = 10
+        @Query("client_id") key: String,              //Key 값
+        @Query("per_page") perPage: Int = 10
     ): Response<UnsplashModel>
 }

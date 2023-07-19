@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName
 
 data class UnsplashModel(
     @SerializedName("total")
-    val total : Int,
+    val total: Int,
     @SerializedName("total_pages")
-    val pages : Int,
+    val pages: Int,
     @SerializedName("results")
-    val results : List<Picture>
+    val results: List<Picture>
 )
 
 data class Picture(

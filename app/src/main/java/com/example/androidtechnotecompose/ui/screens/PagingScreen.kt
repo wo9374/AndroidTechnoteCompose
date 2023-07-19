@@ -27,7 +27,8 @@ import com.example.domain.entity.UnsplashEntity
 fun PagingScreen(
     viewModel: PagingViewModel = hiltViewModel()
 ) {
-    val unsplashPagingItems: LazyPagingItems<UnsplashEntity> = viewModel.unsplashList.collectAsLazyPagingItems()
+    val unsplashPagingItems: LazyPagingItems<UnsplashEntity> =
+        viewModel.unsplashList.collectAsLazyPagingItems()
 
     val itemHeight = 100.dp
 

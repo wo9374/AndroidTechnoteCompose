@@ -16,4 +16,5 @@ fun ItemModel.toEntity(): ItemEntity = ItemEntity(id = this.id, strValue = this.
 fun ItemEntity.toModel(): ItemModel = ItemModel(id = this.id, strValue = this.strValue)
 
 fun Picture.toEntity(): UnsplashEntity = UnsplashEntity(id = this.id, urlStr = this.pictureUrl.url)
-fun UnsplashEntity.toPicture(): Picture = Picture(id = this.id, pictureUrl= PictureUrl(this.urlStr))
+fun UnsplashEntity.toPicture(): Picture =
+    Picture(id = this.id, pictureUrl = PictureUrl(this.urlStr))

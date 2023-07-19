@@ -21,6 +21,7 @@ class DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRemoteDataSource(unsplashAPI: UnsplashAPI): RemoteDataSource = RemoteDataSourceImpl(unsplashAPI)
+    fun provideRemoteDataSource(unsplashAPI: UnsplashAPI): RemoteDataSource =
+        RemoteDataSourceImpl(unsplashAPI)
     //NetworkModule 에서 Provide 해준 unsplashAPI
 }

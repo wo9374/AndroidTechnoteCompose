@@ -1,7 +1,6 @@
 package com.example.data.remote.datasource
 
 import com.example.data.model.Picture
-import com.example.data.model.UnsplashModel
 import com.example.data.remote.api.UnsplashAPI
 import javax.inject.Inject
 
