@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.data.datasource.LocalDataSource
+import com.example.data.local.datasource.LocalDataSource
 import com.example.data.model.ItemModel
 import com.example.data.model.toEntity
 import com.example.data.model.toModel

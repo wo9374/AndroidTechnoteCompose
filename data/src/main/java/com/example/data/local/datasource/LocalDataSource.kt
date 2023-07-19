@@ -1,4 +1,4 @@
-package com.example.data.datasource
+package com.example.data.local.datasource
 
 import com.example.data.database.ItemsDao
 import com.example.data.model.ItemModel

@@ -6,6 +6,9 @@ plugins {
     id 'kotlin-kapt'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.example.data'
     compileSdk 33
@@ -22,6 +25,9 @@ android {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        buildConfigField "String", "UNSPLASH_ACCESS_KEY", properties['unsplash_access_key']
+        buildConfigField "String", "UNSPLASH_SECRET_KEY", properties['unsplash_secret_key']
     }
 
     buildTypes {
@@ -37,10 +43,17 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures{
+        buildConfig = true
+    }
 }
 
 ext {
     room_version = "2.5.2"
+    retrofit_version = "2.9.0"
+    okhttp_version = "4.11.0"
+    moshi_version = "1.14.0"
+    paging_version = "3.1.1"
 }
 
 dependencies {
@@ -61,4 +74,22 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+
+    //Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "androidx.room:room-paging:$room_version"
+
+    //OkHttp
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:$okhttp_version"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+
+    //Moshi
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+
+    //Paging
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-compose:3.2.0-rc01"
 }
