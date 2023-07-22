@@ -110,4 +110,6 @@ dependencies {
 
     //Glide
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+    //Gilde - skydoves
+    implementation "com.github.skydoves:landscapist-glide:1.5.3"
 }

@@ -19,4 +19,6 @@
     <string name="hide_sheet">Hide Sheet</string>
 
     <string name="add_text">추가할 Text를 입력해주세요.</string>
+
+    <string name="search_photo">검색할 사진의 Text를 입력해주세요.</string>
 </resources>
