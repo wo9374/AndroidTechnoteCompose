@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@file:OptIn(
+    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalGlideComposeApi::class
+)
 
 package com.example.androidtechnotecompose.ui.screens
 
@@ -13,9 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -55,19 +57,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.ItemSnapshotList
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.TransitionOptions
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.GlideLazyListPreloader
-import com.bumptech.glide.integration.compose.RequestBuilderTransform
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestOptions
 import com.example.androidtechnotecompose.R
 import com.example.androidtechnotecompose.viewmodel.PagingViewModel
@@ -170,26 +167,71 @@ fun PagingScreen(
             }
 
             else -> {
-                LazyVerticalGrid(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    columns = GridCells.Adaptive(minSize = itemHeight),
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Log.d("PagingScreen", "Items : ${pagingItems.itemSnapshotList.items}")
+                SelectPhotoDisplay(
+                    snapshotList = pagingItems.itemSnapshotList,
+                    innerPadding = innerPadding,
+                    height = itemHeight
+                )
+            }
+        }
+    }
+}
 
-                    items(pagingItems.itemCount) { index ->
-                        PhotoCard(
-                            entity = pagingItems[index]!!,
-                            squareHeight = itemHeight
-                        ) {
-                            //onClicked
-                        }
+@Composable
+fun SelectPhotoDisplay(
+    snapshotList: ItemSnapshotList<UnsplashEntity>,
+    innerPadding: PaddingValues,
+    height: Dp
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+    ) {
+        LazyRow(
+            modifier = Modifier.wrapContentHeight()
+        ) {
+            items(snapshotList.size) {
+                SkyDoveGlide(
+                    entity = snapshotList.items[it],
+                    squareHeight = height,
+                    onClick = {
+
                     }
-                }
+                )
+            }
+        }
+
+        /*ShimmerGlide(
+            modifier = Modifier.width(100.dp).height(100.dp),
+            url = items[0].urlStr
+        )*/
+    }
+}
+
+@Composable
+fun VerticalGrid(
+    items: List<UnsplashEntity>,
+    innerPadding: PaddingValues,
+    height: Dp
+) {
+    LazyVerticalGrid(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding),
+        columns = GridCells.Adaptive(minSize = height),
+        contentPadding = PaddingValues(vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Log.d("PagingScreen", "Items : $items")
+
+        items(items.size) { index ->
+            SkyDoveGlide(
+                entity = items[index],
+                squareHeight = height
+            ) {
+                //onClicked
             }
         }
     }
@@ -200,23 +242,18 @@ fun PagingScreen(
      * */
 }
 
+
 @Composable
-fun PhotoCard(
+fun SkyDoveGlide(
     entity: UnsplashEntity,
     squareHeight: Dp,
     onClick: () -> Unit
 ) {
-    //Default Compose Glide
-    /*GlideImage(
-        modifier = Modifier.height(squareHeight).clickable(onClick = onClick),
-        model = entity.urlStr,
-        contentDescription = "",
-        contentScale = ContentScale.Crop,
-    )*/
-
-    /*GlideImage(
+    GlideImage(
         imageModel = entity.urlStr,
-        modifier = Modifier.height(squareHeight),
+        modifier = Modifier
+            .height(squareHeight)
+            .clickable { onClick },
         requestBuilder = {
             Glide
                 .with(LocalView.current)
@@ -232,12 +269,19 @@ fun PhotoCard(
         success = {
 
         },
-    )*/
+    )
+}
 
+@Composable
+fun ShimmerGlide(
+    modifier: Modifier,
+    url: String,
+) {
     //shimmerEffect 사용시 loading parameter 사용 못함
-    GlideImage( // CoilImage, FrescoImage
-        imageModel = entity.urlStr,
-        modifier = Modifier.height(squareHeight),
+    GlideImage(
+        // CoilImage, FrescoImage
+        imageModel = url,
+        modifier = modifier,
         requestBuilder = {
             Glide
                 .with(LocalView.current)
@@ -259,13 +303,37 @@ fun PhotoCard(
             Text(text = "image request failed.")
         },
     )
+}
 
+@Composable
+fun CircularGlide(
+    height: Dp,
+    url: String,
+) {
     //Circular Reveal Animation
-    /*GlideImage(
-        imageModel = entity.urlStr,
+    GlideImage(
+        imageModel = url,
         contentScale = ContentScale.Crop,
         circularReveal = CircularReveal(duration = 350),
         placeHolder = ImageBitmap.imageResource(R.drawable.ic_fullscreen_24),
         error = ImageBitmap.imageResource(R.drawable.ic_error_gray_24)
-    )*/
+    )
+}
+
+
+@Composable
+fun BasicGlide(
+    height: Dp,
+    url: String,
+    onClick: () -> Unit
+) {
+    //Default Compose Glide
+    GlideImage(
+        modifier = Modifier
+            .height(height)
+            .clickable(onClick = onClick),
+        model = url,
+        contentDescription = "",
+        contentScale = ContentScale.Crop,
+    )
 }
