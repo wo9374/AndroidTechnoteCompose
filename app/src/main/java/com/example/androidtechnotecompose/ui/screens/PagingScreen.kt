@@ -1,26 +1,29 @@
 @file:OptIn(
-    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalGlideComposeApi::class
+    ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class
 )
 
 package com.example.androidtechnotecompose.ui.screens
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -35,19 +38,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -57,7 +63,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.ItemSnapshotList
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -72,132 +77,105 @@ import com.example.domain.entity.UnsplashEntity
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.ShimmerParams
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.launch
 
 @Composable
 fun PagingScreen(
-    viewModel: PagingViewModel = hiltViewModel()
+    pagingViewModel: PagingViewModel = hiltViewModel()
 ) {
 
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val localContext = LocalContext.current
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-
-    val state = rememberLazyListState()
-    val pagingItems: LazyPagingItems<UnsplashEntity> =
-        viewModel.unsplashList.collectAsLazyPagingItems()
-    val itemHeight = 100.dp
-
-    val textState = remember { mutableStateOf("") }
+    val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection),
         topBar = {
-            val emptySearchTxt = stringResource(id = R.string.search_photo)
-
-            TopAppBar(
-                modifier = Modifier.background(MaterialTheme.colorScheme.primary),
-                title = {
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(end = 18.dp),
-                        value = textState.value,
-                        onValueChange = { textValue ->
-                            textState.value = textValue
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search Icon",
-                                tint = androidx.compose.material.MaterialTheme.colors.primary
-                            )
-                        },
-                        placeholder = {
-                            Text(
-                                fontSize = 16.sp,
-                                text = emptySearchTxt
-                            )
-                        },
-                        colors = TextFieldDefaults.textFieldColors(textColor = Color.LightGray),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            capitalization = KeyboardCapitalization.Sentences,
-                            autoCorrect = true,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(onDone = {
-                            if (textState.value.isNotEmpty()) {
-                                coroutineScope.launch {
-
-                                }
-                            } else {
-                                Toast.makeText(context, emptySearchTxt, Toast.LENGTH_SHORT).show()
-                            }
-                        }),
-                    )
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                ),
-                scrollBehavior = scrollBehavior,
+            OutLineSearchBar(
+                context = localContext,
+                scrollBehavior = topBarScrollBehavior,
+                viewModel = pagingViewModel
             )
         },
     ) { innerPadding ->
-        //loading 분기 https://betterprogramming.pub/turn-the-page-overview-of-android-paging3-library-integration-with-jetpack-compose-3a7881ed75b4
+
+        val pagingItems: LazyPagingItems<UnsplashEntity> = pagingViewModel.unsplashList.collectAsLazyPagingItems()
+
+        //loading 분기
+        //https://betterprogramming.pub/turn-the-page-overview-of-android-paging3-library-integration-with-jetpack-compose-3a7881ed75b4
         when (pagingItems.loadState.refresh) {
             is LoadState.Error -> {
-
+                Log.d("PagingError", "${pagingItems.loadState}")
             }
 
             is LoadState.Loading -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(text = "Pagination Loading")
-                    CircularProgressIndicator(color = Color.Black)
-                }
+                LoadingPhotoDisplay(appBarPadding = innerPadding)
             }
 
             else -> {
-                SelectPhotoDisplay(
-                    snapshotList = pagingItems.itemSnapshotList,
-                    innerPadding = innerPadding,
-                    height = itemHeight
+                VerticalGrid(
+                    context = localContext,
+                    items = pagingItems,
+                    appBarPadding = innerPadding,
                 )
+
+                /*SelectPhotoDisplay(
+                    context = localContext,
+                    items = pagingItems,
+                    appBarPadding = innerPadding
+                )*/
             }
         }
     }
 }
 
 @Composable
-fun SelectPhotoDisplay(
-    snapshotList: ItemSnapshotList<UnsplashEntity>,
-    innerPadding: PaddingValues,
-    height: Dp
+fun LoadingPhotoDisplay(
+    appBarPadding: PaddingValues
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding)
+            .padding(appBarPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        LazyRow(
-            modifier = Modifier.wrapContentHeight()
-        ) {
-            items(snapshotList.size) {
-                SkyDoveGlide(
-                    entity = snapshotList.items[it],
-                    squareHeight = height,
-                    onClick = {
+        Text(text = "Pagination Loading")
 
-                    }
+        Spacer(modifier = Modifier.height(4.dp))
+
+        CircularProgressIndicator(color = Color.Black)
+    }
+}
+
+@Composable
+fun SelectPhotoDisplay(
+    context: Context,
+    items: LazyPagingItems<UnsplashEntity>,
+    appBarPadding: PaddingValues
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(appBarPadding)
+    ) {
+
+        LazyRow(
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(vertical = 10.dp),
+        ) {
+
+            items(items.itemCount) { index ->
+                SkyDoveGlide(
+                    context = context,
+                    entity = items[index]!!,
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(60.dp)
+                        .padding(horizontal = 5.dp)
+                        .clickable(onClick = {
+
+                        }),
                 )
             }
         }
@@ -211,29 +189,32 @@ fun SelectPhotoDisplay(
 
 @Composable
 fun VerticalGrid(
-    items: List<UnsplashEntity>,
-    innerPadding: PaddingValues,
-    height: Dp
+    context: Context,
+    items: LazyPagingItems<UnsplashEntity>,
+    appBarPadding: PaddingValues,
 ) {
     LazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding),
-        columns = GridCells.Adaptive(minSize = height),
+            .padding(appBarPadding),
+        columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Log.d("PagingScreen", "Items : $items")
 
-        items(items.size) { index ->
+        items(items.itemCount) { index ->
             SkyDoveGlide(
-                entity = items[index],
-                squareHeight = height
-            ) {
-                //onClicked
-            }
+                context = context,
+                entity = items[index]!!,
+                modifier = Modifier
+                    .height(150.dp)
+                    .clickable(onClick = {
+
+                    })
+            )
         }
+
     }
 
     /**
@@ -244,19 +225,84 @@ fun VerticalGrid(
 
 
 @Composable
+fun OutLineSearchBar(
+    context: Context,
+    scrollBehavior: TopAppBarScrollBehavior,
+    viewModel: PagingViewModel
+) {
+    var keyword by remember { mutableStateOf("Android") }
+
+    val textFieldTemp = remember{ mutableStateOf("Android") }
+    val emptySearchTxt = stringResource(id = R.string.search_photo)
+
+    //searchTxt 가 변할때 마다 검색
+    LaunchedEffect(key1 = keyword) {
+        viewModel.searchKeyword(keyword)
+    }
+
+    TopAppBar(
+        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
+        title = {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(end = 18.dp),
+                value = textFieldTemp.value,
+                onValueChange = {
+                    textFieldTemp.value = it
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = androidx.compose.material.MaterialTheme.colors.primary
+                    )
+                },
+                placeholder = {
+
+                    Text(
+                        fontSize = 16.sp,
+                        text = emptySearchTxt
+                    )
+                },
+                colors = TextFieldDefaults.textFieldColors(textColor = Color.LightGray),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    autoCorrect = true,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    if (textFieldTemp.value.isNotEmpty()){
+                        keyword = textFieldTemp.value
+                    }else{
+                        Toast.makeText(context, emptySearchTxt, Toast.LENGTH_SHORT).show()
+                    }
+                }),
+            )
+        },
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            scrolledContainerColor = MaterialTheme.colorScheme.background,
+        ),
+        scrollBehavior = scrollBehavior,
+    )
+}
+
+
+@Composable
 fun SkyDoveGlide(
+    context: Context,
     entity: UnsplashEntity,
-    squareHeight: Dp,
-    onClick: () -> Unit
+    modifier: Modifier,
 ) {
     GlideImage(
         imageModel = entity.urlStr,
-        modifier = Modifier
-            .height(squareHeight)
-            .clickable { onClick },
+        modifier = modifier.clip(RoundedCornerShape(6.dp)),
         requestBuilder = {
             Glide
-                .with(LocalView.current)
+                .with(context)
                 .asDrawable()
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .sizeMultiplier(0.1f)
@@ -264,10 +310,11 @@ fun SkyDoveGlide(
         contentScale = ContentScale.Crop,
         alignment = Alignment.Center,
         loading = {
-
-        },
-        success = {
-
+            Box(modifier = Modifier.matchParentSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         },
     )
 }
@@ -276,6 +323,7 @@ fun SkyDoveGlide(
 fun ShimmerGlide(
     modifier: Modifier,
     url: String,
+    context: Context
 ) {
     //shimmerEffect 사용시 loading parameter 사용 못함
     GlideImage(
@@ -284,7 +332,7 @@ fun ShimmerGlide(
         modifier = modifier,
         requestBuilder = {
             Glide
-                .with(LocalView.current)
+                .with(context)
                 .asDrawable()
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                 .sizeMultiplier(0.1f)
@@ -323,16 +371,16 @@ fun CircularGlide(
 
 @Composable
 fun BasicGlide(
-    height: Dp,
-    url: String,
+    entity: UnsplashEntity,
+    imgHeight: Dp,
     onClick: () -> Unit
 ) {
     //Default Compose Glide
     GlideImage(
         modifier = Modifier
-            .height(height)
+            .height(imgHeight)
             .clickable(onClick = onClick),
-        model = url,
+        model = entity.urlStr,
         contentDescription = "",
         contentScale = ContentScale.Crop,
     )

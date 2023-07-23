@@ -13,11 +13,11 @@ import javax.inject.Inject
 class UnsplashRepositoryImpl @Inject constructor(
     private val dataSource: RemoteDataSource //DataSourceModule 에서 Provide 해준 dataSource
 ) : UnsplashRepository {
-    override suspend fun getUnsplashPhoto(): Flow<PagingData<UnsplashEntity>> {
+    override suspend fun getUnsplashPhoto(searchKeyword: String): Flow<PagingData<UnsplashEntity>> {
         return Pager(
             config = PagingConfig(pageSize = 20, prefetchDistance = 2),
             pagingSourceFactory = {
-                UnsplashPagingSource(dataSource)
+                UnsplashPagingSource(dataSource, searchKeyword)
             }
         ).flow
     }

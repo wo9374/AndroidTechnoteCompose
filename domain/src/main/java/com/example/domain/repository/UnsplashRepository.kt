@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UnsplashRepository {
 
-    suspend fun getUnsplashPhoto(): Flow<PagingData<UnsplashEntity>>
+    suspend fun getUnsplashPhoto(searchKeyword: String): Flow<PagingData<UnsplashEntity>>
 
 }

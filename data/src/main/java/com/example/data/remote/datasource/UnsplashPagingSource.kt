@@ -12,7 +12,8 @@ const val STARTING_KEY = 1
 
 //Paging 참고 https://medium.com/@mohammadjoumani/paging-with-clean-architecture-in-jetpack-compose-775fbf589256
 class UnsplashPagingSource(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val searchKeyword : String,
 ) : PagingSource<Int, UnsplashEntity>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashEntity> {
@@ -20,6 +21,7 @@ class UnsplashPagingSource(
             val currentPage = params.key ?: STARTING_KEY
             val pictures = remoteDataSource.getUnsplashPhoto(
                 apiKey = BuildConfig.UNSPLASH_ACCESS_KEY,
+                searchKeyword = searchKeyword,
                 pageNumber = currentPage
             ).map {
                 it.toEntity()
