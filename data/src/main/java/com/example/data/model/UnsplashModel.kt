@@ -20,5 +20,8 @@ data class Picture(
 
 data class PictureUrl(
     @SerializedName("thumb")
-    val url: String
+    val thumbUrl: String,
+
+    @SerializedName("full")
+    val fullUrl: String,
 )

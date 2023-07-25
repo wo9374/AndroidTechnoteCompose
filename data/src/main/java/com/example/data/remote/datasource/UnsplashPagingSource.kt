@@ -10,10 +10,9 @@ import java.io.IOException
 
 const val STARTING_KEY = 1
 
-//Paging 참고 https://medium.com/@mohammadjoumani/paging-with-clean-architecture-in-jetpack-compose-775fbf589256
 class UnsplashPagingSource(
     private val remoteDataSource: RemoteDataSource,
-    private val searchKeyword : String,
+    private val searchKeyword: String,
 ) : PagingSource<Int, UnsplashEntity>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashEntity> {

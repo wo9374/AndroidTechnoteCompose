@@ -50,11 +50,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -98,31 +97,36 @@ fun PagingScreen(
         },
     ) { innerPadding ->
 
-        val pagingItems: LazyPagingItems<UnsplashEntity> = pagingViewModel.unsplashList.collectAsLazyPagingItems()
+        val pagingItems: LazyPagingItems<UnsplashEntity> =
+            pagingViewModel.unsplashList.collectAsLazyPagingItems()
 
-        //loading 분기
-        //https://betterprogramming.pub/turn-the-page-overview-of-android-paging3-library-integration-with-jetpack-compose-3a7881ed75b4
         when (pagingItems.loadState.refresh) {
             is LoadState.Error -> {
-                Log.d("PagingError", "${pagingItems.loadState}")
+                Log.d("Paging LoadState.Error", "${pagingItems.loadState}")
             }
 
             is LoadState.Loading -> {
-                LoadingPhotoDisplay(appBarPadding = innerPadding)
+                LoadingPhotoDisplay(innerPadding)
             }
 
             else -> {
-                VerticalGrid(
-                    context = localContext,
-                    items = pagingItems,
-                    appBarPadding = innerPadding,
-                )
+                //List 가 비었을 때 예외 처리
+                if (pagingItems.itemSnapshotList.isEmpty()) {
+                    EmptyResultDisplay(innerPadding)
+                } else {
 
-                /*SelectPhotoDisplay(
-                    context = localContext,
-                    items = pagingItems,
-                    appBarPadding = innerPadding
-                )*/
+                    /*VerticalGridDisplay(
+                        context = localContext,
+                        items = pagingItems,
+                        appBarPadding = innerPadding,
+                    )*/
+
+                    SelectPhotoDisplay(
+                        context = localContext,
+                        items = pagingItems,
+                        appBarPadding = innerPadding
+                    )
+                }
             }
         }
     }
@@ -139,11 +143,11 @@ fun LoadingPhotoDisplay(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = "Pagination Loading")
+        Text(text = stringResource(R.string.pagination_loading))
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        CircularProgressIndicator(color = Color.Black)
+        CircularProgressIndicator()
     }
 }
 
@@ -158,6 +162,8 @@ fun SelectPhotoDisplay(
             .fillMaxSize()
             .padding(appBarPadding)
     ) {
+
+        var selectedItem by remember { mutableStateOf(items[0]) }
 
         LazyRow(
             modifier = Modifier
@@ -174,21 +180,39 @@ fun SelectPhotoDisplay(
                         .height(60.dp)
                         .padding(horizontal = 5.dp)
                         .clickable(onClick = {
-
+                            selectedItem = items[index]
                         }),
                 )
             }
         }
 
-        /*ShimmerGlide(
-            modifier = Modifier.width(100.dp).height(100.dp),
-            url = items[0].urlStr
-        )*/
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            ShimmerGlide(
+                context = context,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(unbounded = true),
+                url = selectedItem!!.fullSizeUrl,
+                contentScale = ContentScale.Fit
+            )
+
+            CircularGlide(
+                context = context,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(unbounded = true),
+                url = selectedItem!!.fullSizeUrl,
+                contentScale = ContentScale.Fit,
+            )
+        }
     }
 }
 
 @Composable
-fun VerticalGrid(
+fun VerticalGridDisplay(
     context: Context,
     items: LazyPagingItems<UnsplashEntity>,
     appBarPadding: PaddingValues,
@@ -216,11 +240,26 @@ fun VerticalGrid(
         }
 
     }
-
     /**
      * GridCells.Adaptive(minSize = 128.dp)
      * GridCells.Fixed( int )
      * */
+}
+
+@Composable
+fun EmptyResultDisplay(
+    appBarPadding: PaddingValues
+) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .padding(appBarPadding)
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = stringResource(R.string.no_search_result)
+        )
+    }
 }
 
 
@@ -232,8 +271,8 @@ fun OutLineSearchBar(
 ) {
     var keyword by remember { mutableStateOf("Android") }
 
-    val textFieldTemp = remember{ mutableStateOf("Android") }
-    val emptySearchTxt = stringResource(id = R.string.search_photo)
+    val textFieldTemp = remember { mutableStateOf("Android") }
+    val emptySearchTxt = stringResource(R.string.search_image)
 
     //searchTxt 가 변할때 마다 검색
     LaunchedEffect(key1 = keyword) {
@@ -260,7 +299,6 @@ fun OutLineSearchBar(
                     )
                 },
                 placeholder = {
-
                     Text(
                         fontSize = 16.sp,
                         text = emptySearchTxt
@@ -274,9 +312,9 @@ fun OutLineSearchBar(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = {
-                    if (textFieldTemp.value.isNotEmpty()){
+                    if (textFieldTemp.value.isNotEmpty()) {
                         keyword = textFieldTemp.value
-                    }else{
+                    } else {
                         Toast.makeText(context, emptySearchTxt, Toast.LENGTH_SHORT).show()
                     }
                 }),
@@ -298,7 +336,7 @@ fun SkyDoveGlide(
     modifier: Modifier,
 ) {
     GlideImage(
-        imageModel = entity.urlStr,
+        imageModel = entity.thumbnailUrl,
         modifier = modifier.clip(RoundedCornerShape(6.dp)),
         requestBuilder = {
             Glide
@@ -320,16 +358,48 @@ fun SkyDoveGlide(
 }
 
 @Composable
+fun CircularGlide(
+    modifier: Modifier,
+    url: String,
+    contentScale: ContentScale,
+    context: Context,
+) {
+    //Circular Reveal Animation
+    GlideImage(
+        modifier = modifier,
+        imageModel = url,
+        contentScale = contentScale,
+        requestBuilder = {
+            Glide
+                .with(context)
+                .asDrawable()
+                .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .sizeMultiplier(0.1f)
+        },
+        circularReveal = CircularReveal(duration = 350),
+        loading = {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center)
+            )
+        },
+        failure = {
+            painterResource(id = R.drawable.ic_error_gray_24)
+        }
+    )
+}
+
+@Composable
 fun ShimmerGlide(
     modifier: Modifier,
     url: String,
+    contentScale: ContentScale,
     context: Context
 ) {
     //shimmerEffect 사용시 loading parameter 사용 못함
     GlideImage(
-        // CoilImage, FrescoImage
-        imageModel = url,
         modifier = modifier,
+        imageModel = url,
+        contentScale = contentScale,
         requestBuilder = {
             Glide
                 .with(context)
@@ -339,39 +409,22 @@ fun ShimmerGlide(
         },
         shimmerParams = ShimmerParams(
             baseColor = MaterialTheme.colorScheme.background,
-            highlightColor = MaterialTheme.colorScheme.onPrimary,
+            highlightColor = Color.LightGray,
             durationMillis = 350,
             dropOff = 0.65f,
             tilt = 20f
         ),
-        contentScale = ContentScale.Crop,
         alignment = Alignment.Center,
-        // shows an error text message when request failed.
         failure = {
-            Text(text = "image request failed.")
+            Text(text = stringResource(R.string.image_request_failed))
         },
-    )
-}
-
-@Composable
-fun CircularGlide(
-    height: Dp,
-    url: String,
-) {
-    //Circular Reveal Animation
-    GlideImage(
-        imageModel = url,
-        contentScale = ContentScale.Crop,
-        circularReveal = CircularReveal(duration = 350),
-        placeHolder = ImageBitmap.imageResource(R.drawable.ic_fullscreen_24),
-        error = ImageBitmap.imageResource(R.drawable.ic_error_gray_24)
     )
 }
 
 
 @Composable
 fun BasicGlide(
-    entity: UnsplashEntity,
+    url: String,
     imgHeight: Dp,
     onClick: () -> Unit
 ) {
@@ -380,7 +433,7 @@ fun BasicGlide(
         modifier = Modifier
             .height(imgHeight)
             .clickable(onClick = onClick),
-        model = entity.urlStr,
+        model = url,
         contentDescription = "",
         contentScale = ContentScale.Crop,
     )
