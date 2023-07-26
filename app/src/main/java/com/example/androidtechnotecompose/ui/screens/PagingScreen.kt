@@ -20,9 +20,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -140,14 +144,19 @@ fun PagingScreen(
                     if (pagingItems.itemSnapshotList.isEmpty()) {   //List 비었을 때 예외 처리
                         PagingStateDisplay(text = stringResource(id = R.string.no_search_result))
                     } else {
+                        val verticalGridScroll = rememberLazyGridState()
+                        val rowScrollState = rememberLazyListState()
+
                         if (!selectableDisplayChecked) {
                             VerticalGridDisplay(
                                 context = localContext,
+                                scrollState = verticalGridScroll,
                                 items = pagingItems,
                             )
                         } else {
                             SelectPhotoDisplay(
                                 context = localContext,
+                                scrollState = rowScrollState,
                                 items = pagingItems,
                             )
                         }
@@ -177,6 +186,7 @@ fun PagingStateDisplay(
 @Composable
 fun SelectPhotoDisplay(
     context: Context,
+    scrollState: LazyListState,
     items: LazyPagingItems<UnsplashEntity>,
 ) {
     var selectedItem by remember { mutableStateOf(items[0]) }
@@ -185,6 +195,7 @@ fun SelectPhotoDisplay(
         modifier = Modifier
             .wrapContentHeight()
             .padding(vertical = 10.dp),
+        state = scrollState
     ) {
 
         items(items.itemCount) { index ->
@@ -229,6 +240,7 @@ fun SelectPhotoDisplay(
 @Composable
 fun VerticalGridDisplay(
     context: Context,
+    scrollState: LazyGridState,
     items: LazyPagingItems<UnsplashEntity>,
 ) {
     LazyVerticalGrid(
@@ -237,6 +249,7 @@ fun VerticalGridDisplay(
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
+        state = scrollState
     ) {
 
         items(items.itemCount) { index ->
