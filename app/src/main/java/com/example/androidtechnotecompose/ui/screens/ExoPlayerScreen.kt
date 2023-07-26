@@ -28,16 +28,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.example.androidtechnotecompose.R
 import com.example.androidtechnotecompose.extensions.noRippleClickable
 import com.example.androidtechnotecompose.extensions.setLandscape
@@ -67,31 +71,6 @@ fun ExoPlayerScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
         var isPlaying by remember { mutableStateOf(true) }
 
-        var totalDuration by remember { mutableStateOf(0L) }
-        var currentTime by remember { mutableStateOf(0L) }
-        var bufferedPercentage by remember { mutableStateOf(0) }
-
-        var isFullScreen by remember { mutableStateOf(false) }
-
-        DisposableEffect(key1 = Unit) {
-            //Bottom Control 에서 사용할 시간과 %를 알기 위한 Listener
-            val listener = object : Player.Listener {
-                override fun onEvents(player: Player, events: Player.Events) {
-                    super.onEvents(player, events)
-                    totalDuration = player.duration.coerceAtLeast(0L)
-                    currentTime = player.currentPosition.coerceAtLeast(0L)
-                    bufferedPercentage = player.bufferedPercentage
-                }
-            }
-            exoPlayer.addListener(listener)
-
-            onDispose {
-                exoPlayer.removeListener(listener)
-                exoPlayer.release()
-            }
-        }
-
-
         //PlayerControls onOff 판단할 Boolean
         var shouldShowControls by remember { mutableStateOf(true) }
 
@@ -112,7 +91,7 @@ fun ExoPlayerScreen() {
             }
         )
 
-        //PlayerControls 가 표시 visible 일때 시간 만큼 invisible 자동 변환
+        //PlayerControls 가 visible 일때 시간 만큼 invisible 자동 변환
         LaunchedEffect(key1 = shouldShowControls) {
             if (shouldShowControls) {
                 delay(3000)
@@ -120,6 +99,45 @@ fun ExoPlayerScreen() {
             }
         }
 
+
+        //Bottom Control 에서 사용할 시간과 %를 알기 위한 Listener
+        var totalDuration by remember { mutableStateOf(0L) }
+        var currentTime by remember { mutableStateOf(0L) }
+        var bufferedPercentage by remember { mutableStateOf(0) }
+
+        val listener = object : Player.Listener {
+            override fun onEvents(player: Player, events: Player.Events) {
+                super.onEvents(player, events)
+                totalDuration = player.duration.coerceAtLeast(0L)
+                currentTime = player.currentPosition.coerceAtLeast(0L)
+                bufferedPercentage = player.bufferedPercentage
+            }
+        }
+        exoPlayer.addListener(listener)
+
+
+        //Background 일때 재생 정지를 위한 Lifecycle, Observer
+        val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+        val observer = LifecycleEventObserver { owner, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
+                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+                else -> {}
+            }
+        }
+
+        DisposableEffect(key1 = Unit) {
+            val lifecycle = lifecycleOwner.value.lifecycle
+            lifecycle.addObserver(observer)
+
+            onDispose {
+                exoPlayer.removeListener(listener)
+                exoPlayer.release()
+                lifecycle.removeObserver(observer)
+            }
+        }
+
+        var isFullScreen by remember { mutableStateOf(false) }
 
         PlayerControls(
             modifier = Modifier.fillMaxSize(),
