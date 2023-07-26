@@ -5,14 +5,14 @@
 package com.example.androidtechnotecompose.ui.screens
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +28,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Switch
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -86,13 +87,20 @@ fun PagingScreen(
 
     val topBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
 
+    //Switch Btn에 의한 검색 화면 분기 Boolean
+    var selectableDisplayChecked by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection),
         topBar = {
             OutLineSearchBar(
-                context = localContext,
+                context = localContext,             //Toast 사용을 위한 context 전달
                 scrollBehavior = topBarScrollBehavior,
-                viewModel = pagingViewModel
+                switchChecked = selectableDisplayChecked,
+                viewModel = pagingViewModel,
+                onCheckChange = {
+                    selectableDisplayChecked = it   //Unit 으로 전달 받은 Switch onCheckChange Action
+                }
             )
         },
     ) { innerPadding ->
@@ -100,32 +108,50 @@ fun PagingScreen(
         val pagingItems: LazyPagingItems<UnsplashEntity> =
             pagingViewModel.unsplashList.collectAsLazyPagingItems()
 
-        when (pagingItems.loadState.refresh) {
-            is LoadState.Error -> {
-                Log.d("Paging LoadState.Error", "${pagingItems.loadState}")
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
 
-            is LoadState.Loading -> {
-                LoadingPhotoDisplay(innerPadding)
-            }
+            /**
+             * Paging 로딩 상태 분기 - 데이터를 가져오는 시점
+             *
+             * refresh : 초기 데이터의 경우
+             * prepend : 현재 위치 이전에 가져오는 항목의 경우
+             * append : 현재 위치 이후에 가져오는 항목의 경우
+             */
 
-            else -> {
-                //List 가 비었을 때 예외 처리
-                if (pagingItems.itemSnapshotList.isEmpty()) {
-                    EmptyResultDisplay(innerPadding)
-                } else {
+            when (pagingItems.loadState.refresh) { //초기
+                is LoadState.Error -> {
+                    PagingStateDisplay(text = stringResource(id = R.string.image_request_failed))
+                }
 
-                    /*VerticalGridDisplay(
-                        context = localContext,
-                        items = pagingItems,
-                        appBarPadding = innerPadding,
-                    )*/
-
-                    SelectPhotoDisplay(
-                        context = localContext,
-                        items = pagingItems,
-                        appBarPadding = innerPadding
+                is LoadState.Loading -> {
+                    PagingStateDisplay(
+                        loadingIndicator = CircularProgressIndicator(),
+                        text = stringResource(id = R.string.pagination_loading)
                     )
+                }
+
+                else -> {
+                    if (pagingItems.itemSnapshotList.isEmpty()) {   //List 비었을 때 예외 처리
+                        PagingStateDisplay(text = stringResource(id = R.string.no_search_result))
+                    } else {
+                        if (!selectableDisplayChecked) {
+                            VerticalGridDisplay(
+                                context = localContext,
+                                items = pagingItems,
+                            )
+                        } else {
+                            SelectPhotoDisplay(
+                                context = localContext,
+                                items = pagingItems,
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -133,81 +159,70 @@ fun PagingScreen(
 }
 
 @Composable
-fun LoadingPhotoDisplay(
-    appBarPadding: PaddingValues
+fun PagingStateDisplay(
+    loadingIndicator: Unit? = null,
+    text: String
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(appBarPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(text = stringResource(R.string.pagination_loading))
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        CircularProgressIndicator()
+    if (loadingIndicator == null) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_error_gray_24),
+            contentDescription = "Error or Empty"
+        )
     }
+
+    Spacer(modifier = Modifier.height(4.dp))
+    Text(text = text)
 }
 
 @Composable
 fun SelectPhotoDisplay(
     context: Context,
     items: LazyPagingItems<UnsplashEntity>,
-    appBarPadding: PaddingValues
 ) {
-    Column(
+    var selectedItem by remember { mutableStateOf(items[0]) }
+
+    LazyRow(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(appBarPadding)
+            .wrapContentHeight()
+            .padding(vertical = 10.dp),
     ) {
 
-        var selectedItem by remember { mutableStateOf(items[0]) }
+        items(items.itemCount) { index ->
+            SkyDoveGlide(
+                context = context,
+                entity = items[index]!!,
+                modifier = Modifier
+                    .width(80.dp)
+                    .height(60.dp)
+                    .padding(horizontal = 5.dp)
+                    .clickable(onClick = {
+                        selectedItem = items[index]
+                    }),
+            )
+        }
+    }
 
-        LazyRow(
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        /*ShimmerGlide(
+            context = context,
             modifier = Modifier
-                .wrapContentHeight()
-                .padding(vertical = 10.dp),
-        ) {
+                .fillMaxWidth()
+                .wrapContentHeight(unbounded = true),
+            url = selectedItem!!.fullSizeUrl,
+            contentScale = ContentScale.Fit
+        )*/
 
-            items(items.itemCount) { index ->
-                SkyDoveGlide(
-                    context = context,
-                    entity = items[index]!!,
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(60.dp)
-                        .padding(horizontal = 5.dp)
-                        .clickable(onClick = {
-                            selectedItem = items[index]
-                        }),
-                )
-            }
-        }
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            ShimmerGlide(
-                context = context,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(unbounded = true),
-                url = selectedItem!!.fullSizeUrl,
-                contentScale = ContentScale.Fit
-            )
-
-            CircularGlide(
-                context = context,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(unbounded = true),
-                url = selectedItem!!.fullSizeUrl,
-                contentScale = ContentScale.Fit,
-            )
-        }
+        CircularGlide(
+            context = context,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(unbounded = true),
+            url = selectedItem!!.fullSizeUrl,
+            contentScale = ContentScale.Fit,
+        )
     }
 }
 
@@ -215,12 +230,9 @@ fun SelectPhotoDisplay(
 fun VerticalGridDisplay(
     context: Context,
     items: LazyPagingItems<UnsplashEntity>,
-    appBarPadding: PaddingValues,
 ) {
     LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(appBarPadding),
+        modifier = Modifier.fillMaxSize(),
         columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -246,33 +258,18 @@ fun VerticalGridDisplay(
      * */
 }
 
-@Composable
-fun EmptyResultDisplay(
-    appBarPadding: PaddingValues
-) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(appBarPadding)
-    ) {
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = stringResource(R.string.no_search_result)
-        )
-    }
-}
-
 
 @Composable
 fun OutLineSearchBar(
     context: Context,
     scrollBehavior: TopAppBarScrollBehavior,
-    viewModel: PagingViewModel
+    switchChecked: Boolean,
+    viewModel: PagingViewModel,
+    onCheckChange: (Boolean) -> Unit,
 ) {
     var keyword by remember { mutableStateOf("Android") }
 
     val textFieldTemp = remember { mutableStateOf("Android") }
-    val emptySearchTxt = stringResource(R.string.search_image)
 
     //searchTxt 가 변할때 마다 검색
     LaunchedEffect(key1 = keyword) {
@@ -280,49 +277,64 @@ fun OutLineSearchBar(
     }
 
     TopAppBar(
-        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
         title = {
-            OutlinedTextField(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(end = 18.dp),
-                value = textFieldTemp.value,
-                onValueChange = {
-                    textFieldTemp.value = it
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                        tint = androidx.compose.material.MaterialTheme.colors.primary
-                    )
-                },
-                placeholder = {
-                    Text(
-                        fontSize = 16.sp,
-                        text = emptySearchTxt
-                    )
-                },
-                colors = TextFieldDefaults.textFieldColors(textColor = Color.LightGray),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    autoCorrect = true,
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                    if (textFieldTemp.value.isNotEmpty()) {
-                        keyword = textFieldTemp.value
-                    } else {
-                        Toast.makeText(context, emptySearchTxt, Toast.LENGTH_SHORT).show()
-                    }
-                }),
-            )
+                    .wrapContentHeight(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                val emptySearchTxt = stringResource(id = R.string.empty_keyword)
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically),
+                    value = textFieldTemp.value,
+                    onValueChange = { textFieldTemp.value = it },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon",
+                            tint = androidx.compose.material.MaterialTheme.colors.primary
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            fontSize = 16.sp,
+                            text = stringResource(R.string.search_keyword)
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(textColor = Color.LightGray),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        autoCorrect = true,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        if (textFieldTemp.value.isNotEmpty()) {
+                            keyword = textFieldTemp.value
+                        } else {
+                            Toast.makeText(context, emptySearchTxt, Toast.LENGTH_SHORT).show()
+                        }
+                    }),
+                )
+
+                Switch(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(8.dp),
+                    checked = switchChecked,
+                    onCheckedChange = onCheckChange
+                )
+            }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
+            //최상단 Color
             containerColor = MaterialTheme.colorScheme.primary,
-            scrolledContainerColor = MaterialTheme.colorScheme.background,
+            //Scroll 되었을 때 Color
+            scrolledContainerColor = MaterialTheme.colorScheme.primary,
         ),
         scrollBehavior = scrollBehavior,
     )

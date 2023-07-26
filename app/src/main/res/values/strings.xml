@@ -20,7 +20,8 @@
 
     <string name="add_text">추가할 Text를 입력해주세요.</string>
 
-    <string name="search_image">검색할 이미지의 Keyword를 입력해주세요.</string>
+    <string name="search_keyword">검색할 Keyword</string>
+    <string name="empty_keyword">Keyword를 입력해 주세요.</string>
     <string name="pagination_loading">이미지를 불러오는 중</string>
     <string name="no_search_result">검색 결과 없음</string>
     <string name="image_request_failed">이미지 요청 실패</string>
