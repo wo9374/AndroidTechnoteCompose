@@ -1,6 +1,6 @@
 package com.example.androidtechnotecompose.ui.screens
 
-import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,110 +38,153 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import com.example.androidtechnotecompose.R
+import com.example.androidtechnotecompose.extensions.formatMinSec
 import com.example.androidtechnotecompose.extensions.noRippleClickable
 import com.example.androidtechnotecompose.extensions.setLandscape
 import com.example.androidtechnotecompose.extensions.setPortrait
 import com.example.androidtechnotecompose.ui.theme.Purple200
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import kotlinx.coroutines.delay
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun ExoPlayerScreen() {
+    val videoUrl =
+        "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        VideoPlayer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16 / 10f),
+            uri = videoUrl
+        )
+    }
+}
+
+@Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+fun VideoPlayer(
+    modifier: Modifier,
+    uri: String
+) {
     val context = LocalContext.current
+
+    //재생 여부 판단할 Boolean
+    var isPlaying by remember { mutableStateOf(true) }
+
+    //PlayerControls onOff 판단할 Boolean
+    var shouldShowControls by remember { mutableStateOf(true) }
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            setMediaItem(
-                MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")
+            val defaultDataSourceFactory = DefaultDataSource.Factory(context)
+
+            val dataSourceFactory: DataSource.Factory = DefaultDataSource.Factory(
+                context, defaultDataSourceFactory
             )
+            val source = ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(MediaItem.fromUri(uri))
+
+            setMediaSource(source)
             prepare()
+
             playWhenReady = true
+            //getPlaybackState() == STATE_READY 일 때 재생 진행할지 여부 설정
+
+            //videoScalingMode = C.VIDEO_SCALING_MODE_DEFAULT
+            //크기 조정 모드를 설정하면 MediaCodec 기반 비디오 렌더러가 활성화되고 출력 표면이 SurfaceView에 의해 소유되는 경우에만 적용
+
+            repeatMode = Player.REPEAT_MODE_ONE
+            //비디오 반복 설정
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        var isPlaying by remember { mutableStateOf(true) }
+    //Bottom Control 에서 사용할 시간과 %를 알기 위한 Listener
+    var totalDuration by remember { mutableStateOf(0L) }
+    var currentTime by remember { mutableStateOf(0L) }
+    var bufferedPercentage by remember { mutableStateOf(0) }
 
-        //PlayerControls onOff 판단할 Boolean
-        var shouldShowControls by remember { mutableStateOf(true) }
+    val listener = object : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            super.onEvents(player, events)
+            totalDuration = player.duration.coerceAtLeast(0L)
+            currentTime = player.currentPosition.coerceAtLeast(0L)
+            bufferedPercentage = player.bufferedPercentage
+        }
+    }
+    exoPlayer.addListener(listener)
 
-        AndroidView(
-            modifier = Modifier.noRippleClickable {
-                shouldShowControls =
-                    shouldShowControls.not() //VideoView 를 클릭할 때 PlayerControls OnOFf
-            },
-            factory = {
-                StyledPlayerView(context).apply {
-                    player = exoPlayer
-                    layoutParams = FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                    )
-                    useController = false //Default Player Control Disable
+
+    //Background 일때 재생 정지를 위한 Lifecycle, Observer
+    /*val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+    val lifecycle = lifecycleOwner.value.lifecycle
+
+    val observer = LifecycleEventObserver { owner, event ->
+        when (event) {
+            Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
+            Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+            else -> {}
+        }
+    }
+    lifecycle.addObserver(observer)*/
+
+    Box(modifier = modifier) {
+        DisposableEffect(
+            AndroidView(
+                modifier = Modifier
+                    .matchParentSize()
+                    .noRippleClickable {
+                        //VideoView 를 클릭할 때 PlayerControls OnOff
+                        shouldShowControls = shouldShowControls.not()
+                    },
+                factory = {
+                    PlayerView(context).apply {
+
+                        //Default Player Control Disable
+                        hideController()
+                        useController = false
+                        resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+
+                        player = exoPlayer
+                        layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                    }
                 }
+            )
+        ) {
+            onDispose {
+                exoPlayer.removeListener(listener)
+                exoPlayer.release()
+                //lifecycle.removeObserver(observer)
             }
-        )
+        }
 
         //PlayerControls 가 visible 일때 시간 만큼 invisible 자동 변환
-        LaunchedEffect(key1 = shouldShowControls) {
+        /*LaunchedEffect(key1 = shouldShowControls) {
             if (shouldShowControls) {
                 delay(3000)
                 shouldShowControls = false
             }
-        }
-
-
-        //Bottom Control 에서 사용할 시간과 %를 알기 위한 Listener
-        var totalDuration by remember { mutableStateOf(0L) }
-        var currentTime by remember { mutableStateOf(0L) }
-        var bufferedPercentage by remember { mutableStateOf(0) }
-
-        val listener = object : Player.Listener {
-            override fun onEvents(player: Player, events: Player.Events) {
-                super.onEvents(player, events)
-                totalDuration = player.duration.coerceAtLeast(0L)
-                currentTime = player.currentPosition.coerceAtLeast(0L)
-                bufferedPercentage = player.bufferedPercentage
-            }
-        }
-        exoPlayer.addListener(listener)
-
-
-        //Background 일때 재생 정지를 위한 Lifecycle, Observer
-        val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-        val observer = LifecycleEventObserver { owner, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
-                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
-                else -> {}
-            }
-        }
-
-        DisposableEffect(key1 = Unit) {
-            val lifecycle = lifecycleOwner.value.lifecycle
-            lifecycle.addObserver(observer)
-
-            onDispose {
-                exoPlayer.removeListener(listener)
-                exoPlayer.release()
-                lifecycle.removeObserver(observer)
-            }
-        }
+        }*/
 
         var isFullScreen by remember { mutableStateOf(false) }
 
         PlayerControls(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.matchParentSize(),
             isVisible = { shouldShowControls },
 
             isPlaying = { isPlaying },
@@ -170,16 +214,12 @@ fun ExoPlayerScreen() {
             }
         )
     }
-
-    //다음영상 추가
-    //val secondItem = MediaItem.fromUri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")
-    //exoPlayer.addMediaItem(secondItem)
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PlayerControls(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
 
     isVisible: () -> Boolean,
 
@@ -202,12 +242,14 @@ fun PlayerControls(
         enter = fadeIn(),
         exit = fadeOut()
     ) {
-        Box(modifier = Modifier.background(Color.Black.copy(alpha = 0.6f))) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.6f))
+        ) {
 
             CenterControlsPanel(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Center),
+                modifier = Modifier.matchParentSize(),
                 isPlaying = isPlaying,
                 onReplayClick = onReplayClick,
                 onPauseToggle = onPauseToggle,
@@ -217,7 +259,6 @@ fun PlayerControls(
             BottomControlsPanel(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
                     .animateEnterExit(
                         enter = slideInVertically(
                             initialOffsetY = { fullHeight: Int ->
@@ -253,7 +294,8 @@ fun CenterControlsPanel(
     }
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         //이전보기
         IconButton(modifier = Modifier.size(40.dp), onClick = onReplayClick) {
@@ -305,13 +347,13 @@ fun BottomControlsPanel(
     val videoTime = remember(currentTime()) { currentTime() }
     val buffer = remember(bufferPercentage()) { bufferPercentage() }
 
-    Column(modifier = modifier.padding(bottom = 10.dp)) {
+    Column(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
             // buffer bar
             Slider(
                 value = buffer.toFloat(),
                 enabled = false,
-                onValueChange = { /*do nothing*/ },
+                onValueChange = { },
                 valueRange = 0f..100f,
                 colors = SliderDefaults.colors(
                     disabledThumbColor = Color.Transparent,
@@ -341,7 +383,7 @@ fun BottomControlsPanel(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterVertically),
-                text = totalTime.formatMinSec(),
+                text = videoTime.formatMinSec(),
                 color = Purple200
             )
 
@@ -350,128 +392,6 @@ fun BottomControlsPanel(
                     .padding(horizontal = 16.dp)
                     .align(Alignment.CenterVertically),
                 onClick = fullScreenToggle
-            ) {
-                Image(
-                    contentScale = ContentScale.Crop,
-                    painter = painterResource(id = R.drawable.ic_fullscreen_24),
-                    contentDescription = "Enter/Exit fullscreen"
-                )
-            }
-        }
-    }
-}
-
-fun Long.formatMinSec(): String {
-    return if (this == 0L) {
-        "..."
-    } else {
-        String.format(
-            "%02d:%02d",
-            TimeUnit.MILLISECONDS.toMinutes(this),
-            TimeUnit.MILLISECONDS.toSeconds(this) -
-                    TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(this)
-                    )
-        )
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun CenterControlsPreview() {
-    val isVideoPlaying = false
-
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-
-        //이전보기
-        IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(id = R.drawable.ic_replay_5_24),
-                contentDescription = "Replay 5 seconds"
-            )
-        }
-
-        // 재생/일시정지 토글
-        IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                painter = if (isVideoPlaying) {
-                    painterResource(id = R.drawable.ic_pause_24)
-                } else {
-                    painterResource(id = R.drawable.ic_play_arrow_24)
-                },
-                contentDescription = "Play/Pause"
-            )
-        }
-
-        //건너뛰기
-        IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(id = R.drawable.ic_forward_5_24),
-                contentDescription = "Forward 10 seconds"
-            )
-        }
-    }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun BottomControlsPreview() {
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            // buffer bar
-            Slider(
-                value = 0f,
-                enabled = false,
-                onValueChange = { /*do nothing*/ },
-                valueRange = 0f..100f,
-                colors = SliderDefaults.colors(
-                    disabledThumbColor = Color.Transparent,
-                    disabledActiveTrackColor = Color.Gray
-                )
-            )
-
-            // seek bar
-            Slider(
-                value = 1f,
-                onValueChange = {},
-                valueRange = 0f..30f,
-                colors =
-                SliderDefaults.colors(
-                    thumbColor = Purple200,
-                    activeTickColor = Purple200
-                )
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterVertically),
-                text = "00:00",
-                color = Purple200
-            )
-
-            IconButton(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.CenterVertically),
-                onClick = {}
             ) {
                 Image(
                     contentScale = ContentScale.Crop,

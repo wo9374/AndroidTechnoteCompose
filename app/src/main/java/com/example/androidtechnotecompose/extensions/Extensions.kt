@@ -8,6 +8,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import java.util.concurrent.TimeUnit
 
 
 //Modifier onClick 클릭 효과 제거
@@ -27,6 +28,22 @@ fun List<Color>.shuffleColors(): List<Color> {
         shuffleColors()
     } else {
         copyColors
+    }
+}
+
+//Video Long type으로 가져오는 영상 시간 Format String
+fun Long.formatMinSec(): String {
+    return if (this == 0L) {
+        "..."
+    } else {
+        String.format(
+            "%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(this),
+            TimeUnit.MILLISECONDS.toSeconds(this) -
+                    TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(this)
+                    )
+        )
     }
 }
 
