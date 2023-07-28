@@ -25,6 +25,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +57,7 @@ import com.example.androidtechnotecompose.extensions.noRippleClickable
 import com.example.androidtechnotecompose.extensions.setLandscape
 import com.example.androidtechnotecompose.extensions.setPortrait
 import com.example.androidtechnotecompose.ui.theme.Purple200
+import kotlinx.coroutines.delay
 
 @Composable
 fun ExoPlayerScreen() {
@@ -180,12 +182,12 @@ fun VideoPlayer(
         }
 
         //PlayerControls 가 visible 일때 시간 만큼 invisible 자동 변환
-        /*LaunchedEffect(key1 = shouldShowControls) {
+        LaunchedEffect(key1 = shouldShowControls) {
             if (shouldShowControls) {
                 delay(3000)
                 shouldShowControls = false
             }
-        }*/
+        }
 
         var isFullScreen by remember { mutableStateOf(false) }
 
