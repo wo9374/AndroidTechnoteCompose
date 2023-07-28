@@ -25,7 +25,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.datasource.DataSource
@@ -56,7 +56,6 @@ import com.example.androidtechnotecompose.extensions.noRippleClickable
 import com.example.androidtechnotecompose.extensions.setLandscape
 import com.example.androidtechnotecompose.extensions.setPortrait
 import com.example.androidtechnotecompose.ui.theme.Purple200
-import kotlinx.coroutines.delay
 
 @Composable
 fun ExoPlayerScreen() {
@@ -103,10 +102,10 @@ fun VideoPlayer(
             setMediaSource(source)
             prepare()
 
-            playWhenReady = true
-            //getPlaybackState() == STATE_READY 일 때 재생 진행할지 여부 설정
+            playWhenReady = false //getPlaybackState() == STATE_READY 일 때 재생 진행할지 여부 설정
+            //ViewLifecycleOwner 로 인한 Resume 자동재생 구현으로 false 지정
 
-            //videoScalingMode = C.VIDEO_SCALING_MODE_DEFAULT
+            videoScalingMode = C.VIDEO_SCALING_MODE_DEFAULT
             //크기 조정 모드를 설정하면 MediaCodec 기반 비디오 렌더러가 활성화되고 출력 표면이 SurfaceView에 의해 소유되는 경우에만 적용
 
             repeatMode = Player.REPEAT_MODE_ONE
@@ -131,17 +130,24 @@ fun VideoPlayer(
 
 
     //Background 일때 재생 정지를 위한 Lifecycle, Observer
-    /*val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
     val lifecycle = lifecycleOwner.value.lifecycle
 
     val observer = LifecycleEventObserver { owner, event ->
         when (event) {
-            Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
-            Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+            Lifecycle.Event.ON_PAUSE -> {
+                exoPlayer.pause()
+            }
+
+            Lifecycle.Event.ON_RESUME -> {
+                if (isPlaying)
+                    exoPlayer.play() //Controller 재생 상태가 play 상태일 때만 재생
+            }
+
             else -> {}
         }
     }
-    lifecycle.addObserver(observer)*/
+    lifecycle.addObserver(observer)
 
     Box(modifier = modifier) {
         DisposableEffect(
@@ -169,7 +175,7 @@ fun VideoPlayer(
             onDispose {
                 exoPlayer.removeListener(listener)
                 exoPlayer.release()
-                //lifecycle.removeObserver(observer)
+                lifecycle.removeObserver(observer)
             }
         }
 
