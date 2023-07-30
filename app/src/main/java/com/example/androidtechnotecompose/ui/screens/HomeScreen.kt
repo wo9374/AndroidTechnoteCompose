@@ -37,6 +37,7 @@ fun HomeScreen(
     collapseClick: () -> Unit,
     roomClick: () -> Unit,
     pagingClick: () -> Unit,
+    calendarClick : () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -86,6 +87,13 @@ fun HomeScreen(
 
                 //Paging
                 FunctionButton(stringResource(R.string.paging), pagingClick)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                //Calendar
+                FunctionButton(stringResource(R.string.calendar), calendarClick)
             }
         }
     }

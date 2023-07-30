@@ -13,6 +13,7 @@
     <string name="collapse_toolbar">Collapse\nToolbar</string>
     <string name="room">Room</string>
     <string name="paging">Paging</string>
+    <string name="calendar">Calendar</string>
 
     <string name="modal_sheet">ModalSheet</string>
     <string name="toggle_full_screen">Toggle Fullscreen</string>

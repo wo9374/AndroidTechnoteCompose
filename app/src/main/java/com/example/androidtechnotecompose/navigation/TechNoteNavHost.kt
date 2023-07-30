@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.androidtechnotecompose.ui.screens.BottomNavBarScreen
 import com.example.androidtechnotecompose.ui.screens.BottomSheetScreen
+import com.example.androidtechnotecompose.ui.screens.CalendarScreen
 import com.example.androidtechnotecompose.ui.screens.CameraScreen
 import com.example.androidtechnotecompose.ui.screens.CollapsingToolbarScreen
 import com.example.androidtechnotecompose.ui.screens.ExoPlayerScreen
@@ -19,6 +20,7 @@ enum class TechNoteScreen {
     Home,
     BottomNavigation, ViewPager, ExoPlayer, BottomSheet,
     Camera, CollapseToolbar, Room, Paging,
+    Calendar,
 }
 
 @Composable
@@ -36,6 +38,7 @@ fun TechNoteNavHost(navController: NavHostController) {
                     collapseClick = { navigate(TechNoteScreen.CollapseToolbar.name) },
                     roomClick = { navigate(TechNoteScreen.Room.name) },
                     pagingClick = { navigate(TechNoteScreen.Paging.name)},
+                    calendarClick = { navigate(TechNoteScreen.Calendar.name)},
                 )
             }
         }
@@ -51,6 +54,7 @@ fun TechNoteNavHost(navController: NavHostController) {
         composable(TechNoteScreen.CollapseToolbar.name) { CollapsingToolbarScreen() }
         composable(TechNoteScreen.Room.name) { RoomScreen() }
         composable(TechNoteScreen.Paging.name) { PagingScreen() }
+        composable(TechNoteScreen.Calendar.name) { CalendarScreen() }
     }
 }
 
