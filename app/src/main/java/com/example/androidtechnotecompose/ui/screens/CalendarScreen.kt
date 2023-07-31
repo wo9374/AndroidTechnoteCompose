@@ -2,6 +2,7 @@
 
 package com.example.androidtechnotecompose.ui.screens
 
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,18 +26,29 @@ fun CalendarScreen() {
     val context = LocalContext.current
 
     val calendar = Calendar.getInstance()
-    val dataState = remember { mutableStateOf("") }
+
+
+    val dateState = remember { mutableStateOf("") }
+    val datePickerDialog = DatePickerDialog(
+        context,{ view, year, month, dayOfMonth ->
+            dateState.value = "${year}년 ${month + 1}월 ${dayOfMonth}일"
+        },
+        calendar[Calendar.YEAR],
+        calendar[Calendar.MONTH],
+        calendar[Calendar.DAY_OF_MONTH]
+    )
+    datePickerDialog.show()
+
+
+    val timeState = remember { mutableStateOf("") }
     val timePickerDialog = TimePickerDialog(
         context, { view, hourOfDay, minute ->
-            dataState.value = "${hourOfDay}시 ${minute}분"
+            timeState.value = "${hourOfDay}시 ${minute}분"
         },
         calendar[Calendar.HOUR_OF_DAY],
-        calendar[Calendar.MINUTE],
-        false
+        calendar[Calendar.MINUTE], false
     )
     timePickerDialog.show()
-
-
 
     Scaffold(
         topBar = {
@@ -54,7 +66,8 @@ fun CalendarScreen() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(dataState.value)
+            Text(timeState.value)
+            Text(dateState.value)
         }
     }
 }
