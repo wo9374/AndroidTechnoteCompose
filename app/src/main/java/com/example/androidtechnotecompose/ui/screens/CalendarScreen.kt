@@ -2,30 +2,24 @@
 
 package com.example.androidtechnotecompose.ui.screens
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import androidx.compose.foundation.layout.Arrangement
+import android.widget.CalendarView
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.example.androidtechnotecompose.R
 import java.util.Calendar
 
 @Composable
@@ -58,6 +52,10 @@ fun CalendarScreen() {
     )
     timePickerDialog.show()*/
 
+    var date by remember {
+        mutableStateOf("")
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,27 +63,30 @@ fun CalendarScreen() {
                     Text("")
                 }
             )
-        }
+        },
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(innerPadding)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "")
-                }
-                Text(text = "Calendar", fontSize = 24.sp)
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = "")
-                }
-            }
+            val calTheme = if (isSystemInDarkTheme()) R.style.CustomCalendarDark else R.style.CustomCalendar
+            val dateTheme = if (isSystemInDarkTheme()) R.style.CustomDateDark else R.style.CustomDate
+            val weekTheme = if (isSystemInDarkTheme()) R.style.CustomWeekDark else R.style.CustomWeek
+
+            AndroidView(
+                factory = {
+                    CalendarView(android.view.ContextThemeWrapper(it, calTheme)).apply {
+                        dateTextAppearance = dateTheme
+                        weekDayTextAppearance = weekTheme
+                    }
+                },
+                update = {
+                    it.setOnDateChangeListener { calendarView, year, month, day ->
+                        date = "$year - ${month + 1} - $day"
+                    }
+                })
+            Text(text = date)
         }
     }
 }
