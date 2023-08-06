@@ -21,10 +21,10 @@ class RoomViewModel @Inject constructor(
     private val clearItemsUseCase: ClearItemsUseCase,
 ) : ViewModel() {
 
-    val numbers = getItemsUseCase().stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
+    val numbers = getItemsUseCase().stateIn( //Flow를 StateFlow 로 변환
+        scope = viewModelScope,              //StateFlow가 Flow로부터 데이터를 구독받을 CoroutineScope 명시
+        started = SharingStarted.WhileSubscribed(5000), //Flow로부터 언제부터 구독을 할지 명시
+        initialValue = emptyList()           //초기값
     )
 
     fun insertItem(str: String) = viewModelScope.launch {
