@@ -1,6 +1,9 @@
 package com.example.androidtechnotecompose.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,8 +27,12 @@ enum class TechNoteScreen {
 }
 
 @Composable
-fun TechNoteNavHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = TechNoteScreen.Home.name) {
+fun TechNoteNavHost(navController: NavHostController, paddingValues: PaddingValues) {
+    NavHost(
+        modifier = Modifier.padding(paddingValues),
+        navController = navController,
+        startDestination = TechNoteScreen.Home.name
+    ) {
 
         composable(TechNoteScreen.Home.name) {
             navController.apply {
